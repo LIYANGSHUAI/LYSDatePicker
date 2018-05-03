@@ -14,6 +14,7 @@
 		CC9A3B3120994C5200E04FDC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CC9A3B2F20994C5200E04FDC /* LaunchScreen.storyboard */; };
 		CC9A3B3420994C5200E04FDC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CC9A3B3320994C5200E04FDC /* main.m */; };
 		CC9A3B3D209952DC00E04FDC /* LYSDatePickerController.m in Sources */ = {isa = PBXBuildFile; fileRef = CC9A3B3C209952DC00E04FDC /* LYSDatePickerController.m */; };
+		CCBE700B209AD88400A4EE21 /* LYSDatePickerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CCBE700A209AD88300A4EE21 /* LYSDatePickerManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,8 @@
 		CC9A3B3320994C5200E04FDC /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		CC9A3B3B209952DC00E04FDC /* LYSDatePickerController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LYSDatePickerController.h; sourceTree = "<group>"; };
 		CC9A3B3C209952DC00E04FDC /* LYSDatePickerController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LYSDatePickerController.m; sourceTree = "<group>"; };
+		CCBE7009209AD88300A4EE21 /* LYSDatePickerManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LYSDatePickerManager.h; sourceTree = "<group>"; };
+		CCBE700A209AD88300A4EE21 /* LYSDatePickerManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LYSDatePickerManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +83,8 @@
 			children = (
 				CC9A3B3B209952DC00E04FDC /* LYSDatePickerController.h */,
 				CC9A3B3C209952DC00E04FDC /* LYSDatePickerController.m */,
+				CCBE7009209AD88300A4EE21 /* LYSDatePickerManager.h */,
+				CCBE700A209AD88300A4EE21 /* LYSDatePickerManager.m */,
 			);
 			path = LYSDatePickerController;
 			sourceTree = "<group>";
@@ -157,6 +162,7 @@
 				CC9A3B3D209952DC00E04FDC /* LYSDatePickerController.m in Sources */,
 				CC9A3B2920994C5000E04FDC /* ViewController.m in Sources */,
 				CC9A3B3420994C5200E04FDC /* main.m in Sources */,
+				CCBE700B209AD88400A4EE21 /* LYSDatePickerManager.m in Sources */,
 				CC9A3B2620994C5000E04FDC /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -23,6 +23,7 @@
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     LYSDatePickerController *datePick = [[LYSDatePickerController alloc] init];
+//    datePick.selectDate = [NSDate dateWithTimeIntervalSinceNow:1000000];
     [datePick showDatePickerAnimation];
 }
 

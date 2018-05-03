@@ -8,6 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
+typedef enum : NSUInteger {
+    LYSDatePickerTypeDay,
+    LYSDatePickerTypeDayAndTime,
+    LYSDatePickerTypeTime,
+} LYSDatePickerType;
+
 @interface LYSDatePickerController : UIViewController
 
 @property (nonatomic,assign)CGFloat pickViewHeight;
@@ -15,6 +21,8 @@
 @property (nonatomic,assign)int toYear;
 
 @property (nonatomic,strong)NSDate *selectDate;
+
+@property (nonatomic,assign)LYSDatePickerType pickType;
 
 - (void)showDatePickerAnimation;
 - (void)hiddenDatePickerAnimation;
