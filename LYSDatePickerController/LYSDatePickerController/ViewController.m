@@ -18,6 +18,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
+    
+    self.title = @"日期选择器";
+    
     self.view.backgroundColor = [UIColor lightGrayColor];
     
     UIButton *btn1 = [[UIButton alloc] initWithFrame:CGRectMake(10, 100, 100, 40)];
@@ -43,7 +46,10 @@
 }
 
 - (void)btn1Action {
-    [LYSDatePickerController alertDatePickerWithType:LYSDatePickerTypeDayAndTime];
+    LYSDatePickerController *datePicker = [[LYSDatePickerController alloc] init];
+    [self presentViewController:datePicker animated:NO completion:^{
+        [datePicker showAnimationContentViewWithCompletion:nil];
+    }];
 }
 
 - (void)btn2Action {

@@ -6,28 +6,9 @@
 //  Copyright © 2018年 liyangshuai. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "LYSDateLogicViewController.h"
 
-typedef enum : NSUInteger {
-    LYSDatePickerTypeDay,
-    LYSDatePickerTypeDayAndTime,
-    LYSDatePickerTypeTime,
-} LYSDatePickerType;
-
-@interface LYSDatePickerController : UIViewController
-
-@property (nonatomic,assign)CGFloat pickViewHeight;
-@property (nonatomic,assign)int fromYear;
-@property (nonatomic,assign)int toYear;
-
-@property (nonatomic,strong)NSDate *selectDate;
-
-@property (nonatomic,assign)LYSDatePickerType pickType;
-
-- (void)showDatePickerAnimation;
-- (void)hiddenDatePickerAnimation;
-
-
+@interface LYSDatePickerController : LYSDateLogicViewController
 // 设置视图高度
 + (void)customPickerViewHeight:(CGFloat)height;
 // 设置开始年份
@@ -38,7 +19,9 @@ typedef enum : NSUInteger {
 + (void)customSelectDate:(NSDate *)date;
 // 设置弹出类型
 + (void)customPickerType:(LYSDatePickerType)type;
-// 弹出日期选择器,附带类型
+// 弹出日期选择器,此方法没有设置类型和默认选中日期
++ (void)alertDatePicker;
+// 弹出日期选择器,附带类型,日期为当前时间
 + (void)alertDatePickerWithType:(LYSDatePickerType)pickerType;
 // 弹出日期选择器,附带类型和默认选中日期
 + (void)alertDatePickerWithType:(LYSDatePickerType)pickerType selectDate:(NSDate *)selectDate;
