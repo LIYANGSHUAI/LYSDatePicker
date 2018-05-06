@@ -13,4 +13,6 @@
 @property (nonatomic,assign)BOOL showIndicator;
 // 分割线颜色
 @property (nonatomic,strong)UIColor *indicatorColor;
+// 分割线高度
+@property(nonatomic, assign)CGFloat indicatorHeight;
 @end

@@ -8,6 +8,10 @@
 
 #import "LYSDateIndicatorViewController.h"
 
+#define Rect(x,y,w,h) CGRectMake(x, y, w, h)
+#define ScreenWidth CGRectGetWidth([UIScreen mainScreen].bounds)
+#define ScreenHeight CGRectGetHeight([UIScreen mainScreen].bounds)
+
 @interface LYSDateIndicatorViewController ()
 
 @end
@@ -21,7 +25,9 @@
         // 默认显示分割线
         self.showIndicator = YES;
         // 分割线默认颜色
-        self.indicatorColor = [UIColor lightGrayColor];
+        self.indicatorColor = [UIColor colorWithRed:238/255.0 green:238/255.0 blue:238/255.0 alpha:1];
+        // 分割线高度
+        self.indicatorHeight = 5;
     }
     return self;
 }
@@ -38,9 +44,9 @@
 {
     if (self.showIndicator) {
         CGFloat headerViewHeight = CGRectGetHeight(self.headerView.frame);
-        UIImage *line = [self ly_imageWithColor:self.indicatorColor alpha:1];
+        UIImage *line = [self imageWithColor:self.indicatorColor alpha:1];
         UIImageView *lineView = [[UIImageView alloc] initWithImage:line];
-        lineView.frame = CGRectMake(0, headerViewHeight, CGRectGetWidth(self.view.frame), 0.5);
+        lineView.frame = Rect(0, headerViewHeight, ScreenWidth, self.indicatorHeight);
         [self.contentView addSubview:lineView];
     }
 }
@@ -49,15 +55,5 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

@@ -8,30 +8,72 @@
 
 #import "LYSDateBaseViewController.h"
 
+NSString *const LYSDatePickerWillAppearNotifition = @"LYSDatePickerWillAppearNotifition";
+NSString *const LYSDatePickerDidAppearNotifition = @"LYSDatePickerDidAppearNotifition";
+NSString *const LYSDatePickerWillDisAppearNotifition = @"LYSDatePickerWillDisAppearNotifition";
+NSString *const LYSDatePickerDidDisAppearNotifition = @"LYSDatePickerDidDisAppearNotifition";
+
+NSString *const LYSDatePickerDidCancelNotifition = @"LYSDatePickerDidCancelNotifition";
+NSString *const LYSDatePickerDidSelectDateNotifition = @"LYSDatePickerDidSelectDateNotifition";
+
 @interface LYSDateBaseViewController ()
 
 @end
 
+static id datePicker = nil;
+
 @implementation LYSDateBaseViewController
+
++ (instancetype)shareInstance
+{
+    if (!datePicker) {
+        datePicker = [[[self class] alloc] init];
+    }
+    return datePicker;
+}
+
++ (void)shareRelease
+{
+    datePicker = nil;
+}
+
+- (void)commitDatePicker
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:LYSDatePickerDidSelectDateNotifition
+                                                        object:nil
+                                                      userInfo:@{@"date":self.date}];
+    if (self.didSelectDatePicker)
+    {
+        self.didSelectDatePicker(self.date);
+    }
+    
+    if (self.delegate && [self.delegate respondsToSelector:@selector(pickerViewController:didSelectDate:)])
+    {
+        [self.delegate pickerViewController:(LYSDatePickerController *)self didSelectDate:self.date];
+    }
+    
+}
+
+- (void)cancelDatePicker {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(pickerViewControllerDidCancel:)]) {
+        [self.delegate pickerViewControllerDidCancel:(LYSDatePickerController *)self];
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:LYSDatePickerDidCancelNotifition object:nil];
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
 // 获取最外层控制器
-+ (UIViewController *)ly_getOuterViewController
++ (UIViewController *)getOuterViewController
 {
     UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
     return keyWindow.rootViewController;
 }
 
-- (UIImage *)ly_imageWithColor:(UIColor *)color alpha:(CGFloat)alpha
+- (UIImage *)imageWithColor:(UIColor *)color alpha:(CGFloat)alpha
 {
     // 创建一个color对象
     UIColor *tempColor = [color colorWithAlphaComponent:alpha];
@@ -50,14 +92,9 @@
     return img;
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
 }
-*/
 
 @end

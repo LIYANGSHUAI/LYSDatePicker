@@ -7,6 +7,9 @@
 //
 
 #import "LYSDatePickerViewController.h"
+#import "LYSDatePickerTypeDayAndTimeDelegate.h"
+#import "LYSDatePickerTypeDayDelegate.h"
+#import "LYSDatePickerTypeTimeDelegate.h"
 
 typedef enum : NSUInteger {
     LYSDatePickerTypeDay,
@@ -15,7 +18,8 @@ typedef enum : NSUInteger {
 } LYSDatePickerType;
 
 @interface LYSDateLogicViewController : LYSDatePickerViewController
-
+// 选择器itemLabel
+@property (nonatomic,strong,readonly)UILabel *subLabel;
 // 日期开始时间
 @property (nonatomic,assign)int fromYear;
 // 日期结束时间

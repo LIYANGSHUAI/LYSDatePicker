@@ -48,7 +48,8 @@
     return _gregorian;
 }
 // 获取年列表
-- (NSArray<NSString *> *)fetchYearsWithFromYear:(int)fromYear to:(int)toYear {
+- (NSArray<NSString *> *)fetchYearsWithFromYear:(int)fromYear to:(int)toYear
+{
     BOOL isCan = _year_from == fromYear && _year_to == toYear && _years && [_years count] > 0;
     if (!isCan) {
         NSMutableArray *tempAry = [NSMutableArray array];
@@ -60,7 +61,8 @@
     return _years;
 }
 // 获取月列表
-- (NSArray<NSString *> *)fetchMonthsWithYear:(int)year {
+- (NSArray<NSString *> *)fetchMonthsWithYear:(int)year
+{
     BOOL isCan = _month_year == year && _months && [_months count] > 0;
     if (!isCan) {
         NSDate *tempDate = [self dateWithString:[NSString stringWithFormat:@"%@",@(year)] formatter:@"yyyy"];
@@ -74,7 +76,8 @@
     return _months;
 }
 // 获取日列表(不包含星期几)
-- (NSArray<NSString *> *)fetchDaysWithYear:(int)year month:(int)month {
+- (NSArray<NSString *> *)fetchDaysWithYear:(int)year month:(int)month
+{
     BOOL isCan = _day_year == year && _day_month == month && _days && [_days count] > 0;
     if (!isCan) {
         NSDate *tempDate = [self dateWithString:[NSString stringWithFormat:@"%@/%@",@(year),@(month)] formatter:@"yyyy/MM"];
@@ -89,7 +92,8 @@
 }
 
 // 获取日列表(包含星期几)
-- (NSArray<NSString *> *)fetchDaysAndWeekDayWithYear:(int)year month:(int)month isShortWeekName:(BOOL)isShortName {
+- (NSArray<NSString *> *)fetchDaysAndWeekDayWithYear:(int)year month:(int)month isShortWeekName:(BOOL)isShortName
+{
     BOOL isCan = _weekday_year == year && _weekday_month == month && _weekdays && [_weekdays count] > 0;
     if (!isCan) {
         NSDate *tempDate = [self dateWithString:[NSString stringWithFormat:@"%@/%@",@(year),@(month)] formatter:@"yyyy/MM"];
@@ -108,7 +112,8 @@
     return _weekdays;
 }
 // 获取小时
-- (NSArray<NSString *> *)fetchHour {
+- (NSArray<NSString *> *)fetchHour
+{
     BOOL isCan = _hours && [_hours count] > 0;
     if (!isCan) {
         NSMutableArray *tempAry = [NSMutableArray array];
@@ -125,7 +130,8 @@
 }
 
 // 获取分钟
-- (NSArray<NSString *> *)fetchMinutes {
+- (NSArray<NSString *> *)fetchMinutes
+{
     BOOL isCan = _minutes && [_minutes count] > 0;
     if (!isCan) {
         NSMutableArray *tempAry = [NSMutableArray array];
@@ -187,11 +193,13 @@
     return [gregorian dateFromComponents:comps];
 }
 // 获取给定日期是星期几
-- (NSInteger)fetchWeekdayNumWithDate:(NSDate *)date {
+- (NSInteger)fetchWeekdayNumWithDate:(NSDate *)date
+{
     return [[[NSCalendar currentCalendar] components:NSCalendarUnitWeekday fromDate:date] weekday];
 }
 // 获取给定日期是星期几
-- (NSString *)fetchWeekdayNameWithDate:(NSDate *)date isShortName:(BOOL)isShortName localeIdentifier:(NSString *)localeIdentifier {
+- (NSString *)fetchWeekdayNameWithDate:(NSDate *)date isShortName:(BOOL)isShortName localeIdentifier:(NSString *)localeIdentifier
+{
     NSDateFormatter *formatter = [NSDateFormatter new];
     formatter.timeZone = [NSTimeZone timeZoneWithAbbreviation:@"UTC"];
     formatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:localeIdentifier];
@@ -199,11 +207,13 @@
     return [formatter stringFromDate:date];
 }
 // 获取给定日期是星期几
-- (NSString *)fetchWeekdayCNNameWithDate:(NSDate *)date isShortName:(BOOL)isShortName {
+- (NSString *)fetchWeekdayCNNameWithDate:(NSDate *)date isShortName:(BOOL)isShortName
+{
     return [self fetchWeekdayNameWithDate:date isShortName:isShortName localeIdentifier:@"zh_CN"];
 }
 // 获取给定日期是星期几
-- (NSString *)fetchWeekdayENNameWithDate:(NSDate *)date isShortName:(BOOL)isShortName {
+- (NSString *)fetchWeekdayENNameWithDate:(NSDate *)date isShortName:(BOOL)isShortName
+{
     return [self fetchWeekdayNameWithDate:date isShortName:isShortName localeIdentifier:@"en_US"];
 }
 @end

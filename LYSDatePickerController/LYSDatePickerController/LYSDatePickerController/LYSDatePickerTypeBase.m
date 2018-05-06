@@ -17,52 +17,62 @@
 
 @implementation LYSDatePickerTypeBase
 
-- (instancetype)init
+- (instancetype)initWithPickerView:(UIPickerView *)pickerView
 {
-    self = [super init];
-    if (self) {
+    if (self = [super init]) {
+        self.pickView = pickerView;
         self.pickerManager = [[LYSDatePickerManager alloc] init];
     }
     return self;
 }
 
-- (NSArray<NSString *> *)years {
+- (NSArray<NSString *> *)years
+{
     return [self.pickerManager fetchYearsWithFromYear:self.fromYear to:self.toYear];
 }
 
-- (NSArray<NSString *> *)months {
+- (NSArray<NSString *> *)months
+{
     return [self.pickerManager fetchMonthsWithYear:self.currentYear];
 }
 
-- (NSArray<NSString *> *)days {
+- (NSArray<NSString *> *)days
+{
     return [self.pickerManager fetchDaysWithYear:self.currentYear month:self.currentMonth];
 }
 
-- (NSArray<NSString *> *)weekDays {
+- (NSArray<NSString *> *)weekDays
+{
     return [self.pickerManager fetchDaysAndWeekDayWithYear:self.currentYear month:self.currentMonth isShortWeekName:NO];
 }
 
-- (NSArray<NSString *> *)weekDaysShortName {
+- (NSArray<NSString *> *)weekDaysShortName
+{
     return [self.pickerManager fetchDaysAndWeekDayWithYear:self.currentYear month:self.currentMonth isShortWeekName:YES];
 }
 
-- (NSArray<NSString *> *)hours {
+- (NSArray<NSString *> *)hours
+{
     return [self.pickerManager fetchHour];
 }
 
-- (NSArray<NSString *> *)minutes {
+- (NSArray<NSString *> *)minutes
+{
     return [self.pickerManager fetchMinutes];
 }
 
-- (NSInteger)numberOfComponentsInPickerView:(nonnull UIPickerView *)pickerView {
+- (NSInteger)numberOfComponentsInPickerView:(nonnull UIPickerView *)pickerView
+{
     return 0;
 }
 
-- (NSInteger)pickerView:(nonnull UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
+- (NSInteger)pickerView:(nonnull UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
+{
     return 0;
 }
 // 拆分日期对象,获取时间粒度
 - (void)defaultWithDate:(NSDate *)date {}
 // 更新选择器
 - (void)updateDatePicker {}
+
 @end

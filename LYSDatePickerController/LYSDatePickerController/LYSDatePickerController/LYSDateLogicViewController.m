@@ -7,38 +7,36 @@
 //
 
 #import "LYSDateLogicViewController.h"
-#import "LYSDatePickerTypeDayAndTimeDelegate.h"
-#import "LYSDatePickerTypeDayDelegate.h"
-#import "LYSDatePickerTypeTimeDelegate.h"
+
+#define IS5SBOOL CGSizeEqualToSize([UIScreen mainScreen].bounds.size, CGSizeMake(320, 568))
+#define IS6SBOOL CGSizeEqualToSize([UIScreen mainScreen].bounds.size, CGSizeMake(375, 667))
+#define IS6SPBOOL CGSizeEqualToSize([UIScreen mainScreen].bounds.size, CGSizeMake(414, 736))
+#define ISXBOOL CGSizeEqualToSize([UIScreen mainScreen].bounds.size, CGSizeMake(375, 812))
+
+#define FontRank(A,B,C,D,E) (IS5SBOOL ? A : (IS6SBOOL ? B : (IS6SPBOOL ? C : (ISXBOOL ? D : E))))
 
 @interface LYSDateLogicViewController ()
 
-// 默认选择类型
-@property (nonatomic,strong)LYSDatePickerTypeBase *typeBase;
+@property (nonatomic,strong,readwrite)UILabel *subLabel;          // 选择器itemLabel
+@property (nonatomic,strong)LYSDatePickerTypeBase *typeBase;      // 默认选择类型
 
 @end
 
 @implementation LYSDateLogicViewController
 
-- (instancetype)init
-{
+- (instancetype)init {
     self = [super init];
     if (self) {
-        // 默认开始年份
-        self.fromYear = 1970;
-        // 默认结束年份
-        self.toYear = 2070;
-        // 默认选择器类型
-        self.pickType = LYSDatePickerTypeDayAndTime;
-        // 默认选中日期
-        self.selectDate = [NSDate date];
+        self.fromYear = 1970;                                 // 默认开始年份
+        self.toYear = 2070;                                   // 默认结束年份
+        self.pickType = LYSDatePickerTypeDayAndTime;          // 默认选择器类型
+        self.selectDate = [NSDate date];                      // 默认选中日期
     }
     return self;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
     
     // 初始化选择器类型
     [self initPickerType];
@@ -48,37 +46,59 @@
     [self.typeBase updateDatePicker];
 }
 
+- (UILabel *)subLabel
+{
+    if (!_subLabel) {
+        _subLabel = [[UILabel alloc] init];
+        _subLabel = [[UILabel alloc] init];
+        _subLabel.textAlignment = NSTextAlignmentCenter;
+        _subLabel.textColor = [UIColor blackColor];
+        _subLabel.font = [UIFont systemFontOfSize:FontRank(14,16,16,16,16)];
+#ifdef DEBUG
+//        _subLabel.backgroundColor = [UIColor redColor];
+#endif
+    }
+    return _subLabel;
+}
 
 // 初始化选择器类型
-- (void)initPickerType
-{
+- (void)initPickerType {
+    
     switch (self.pickType) {
         case LYSDatePickerTypeDayAndTime:
         {
-            self.typeBase = [[LYSDatePickerTypeDayAndTimeDelegate alloc] init];
+            self.typeBase = [[LYSDatePickerTypeDayAndTimeDelegate alloc] initWithPickerView:self.pickView];
         }
             break;
         case LYSDatePickerTypeDay:
         {
-            self.typeBase = [[LYSDatePickerTypeDayDelegate alloc] init];
+            self.typeBase = [[LYSDatePickerTypeDayDelegate alloc] initWithPickerView:self.pickView];
         }
             break;
         case LYSDatePickerTypeTime:
         {
-            self.typeBase = [[LYSDatePickerTypeTimeDelegate alloc] init];
+            self.typeBase = [[LYSDatePickerTypeTimeDelegate alloc] initWithPickerView:self.pickView];
         }
             break;
         default:
             break;
     }
     
-    self.typeBase.view = self.view;
-    self.typeBase.pickView = self.pickView;
     self.typeBase.fromYear = self.fromYear;
     self.typeBase.toYear = self.toYear;
     
     self.pickView.delegate = self.typeBase;
     self.pickView.dataSource = self.typeBase;
+    
+    self.typeBase.titleLabel = self.subLabel;
+    
+    __weak LYSDateLogicViewController *weakSelf = self;
+    [self.typeBase setDidSelectItem:^(NSDate *date) {
+        weakSelf.date = date;
+        if ([weakSelf.headerView respondsToSelector:@selector(updateDate:)]) {
+            [weakSelf.headerView updateDate:date];
+        }
+    }];
     
 }
 
@@ -87,14 +107,5 @@
     // Dispose of any resources that can be recreated.
 }
 
-/*
- #pragma mark - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- */
 
 @end

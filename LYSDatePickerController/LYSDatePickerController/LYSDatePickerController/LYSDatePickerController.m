@@ -9,43 +9,14 @@
 #import "LYSDatePickerController.h"
 
 #define Rect(x,y,w,h) CGRectMake(x, y, w, h)
-#define ScreenWidth CGRectGetWidth(self.view.frame)
-#define ScreenHeight CGRectGetHeight(self.view.frame)
+#define ScreenWidth CGRectGetWidth([UIScreen mainScreen].bounds)
+#define ScreenHeight CGRectGetHeight([UIScreen mainScreen].bounds)
 
 @interface LYSDatePickerController ()
 
 @end
 
-// 当使用类方法弹出选择器时,默认使用单例模式
-static LYSDatePickerController *datePicker = nil;
-
 @implementation LYSDatePickerController
-
-#pragma mark - 弹出日期选择器 -
-+ (void)alertDatePicker
-{
-    LYSDatePickerController *datePicker = [LYSDatePickerController shareInstance];
-    [[self ly_getOuterViewController] presentViewController:datePicker animated:NO completion:^{
-        [datePicker showAnimationContentViewWithCompletion:nil];
-    }];
-}
-
-#pragma mark - 弹出日期选择器,附带类型 -
-+ (void)alertDatePickerWithType:(LYSDatePickerType)pickerType
-{
-    [self alertDatePickerWithType:pickerType selectDate:[NSDate date]];
-}
-
-#pragma mark - 弹出日期选择器,附带类型和默认选中日期 -
-+ (void)alertDatePickerWithType:(LYSDatePickerType)pickerType selectDate:(NSDate *)selectDate
-{
-    LYSDatePickerController *datePicker = [LYSDatePickerController shareInstance];
-    datePicker.selectDate = selectDate;
-    datePicker.pickType = pickerType;
-    [[self ly_getOuterViewController] presentViewController:datePicker animated:NO completion:^{
-        [datePicker showAnimationContentViewWithCompletion:nil];
-    }];
-}
 
 #pragma mark - 设置视图高度 -
 + (void)customPickerViewHeight:(CGFloat)height
@@ -81,20 +52,55 @@ static LYSDatePickerController *datePicker = nil;
     LYSDatePickerController *datePicker = [LYSDatePickerController shareInstance];
     datePicker.pickType = type;
 }
-
-#pragma mark - 创建单例 -
-+ (instancetype)shareInstance
-{
-    if (!datePicker) {
-        datePicker = [[LYSDatePickerController alloc] init];
-    }
-    return datePicker;
+#pragma mark - 设置代理 -
++ (void)customPickerDelegate:(id<LYSDatePickerSelectDelegate>)delegate {
+    LYSDatePickerController *datePicker = [LYSDatePickerController shareInstance];
+    datePicker.delegate = delegate;
 }
 
-#pragma mark - 释放单例 -
-+ (void)shareRelease
+#pragma mark - 弹出日期选择器 -
++ (void)alertDatePickerInWindowRootVC
 {
-    datePicker = nil;
+    [LYSDatePickerController showDatePickerInWindowRootVC];
+}
+
++ (void)alertDatePickerWithController:(UIViewController *)controller
+{
+    [LYSDatePickerController showDatePickerWithController:controller];
+}
+
+#pragma mark - 弹出日期选择器,附带类型 -
++ (void)alertDatePickerInWindowRootVCWithType:(LYSDatePickerType)pickerType
+{
+    LYSDatePickerController *datePicker = [LYSDatePickerController shareInstance];
+    datePicker.selectDate = [NSDate date];
+    datePicker.pickType = pickerType;
+    [LYSDatePickerController showDatePickerInWindowRootVC];
+}
+
++ (void)alertDatePickerWithController:(UIViewController *)controller type:(LYSDatePickerType)pickerType
+{
+    LYSDatePickerController *datePicker = [LYSDatePickerController shareInstance];
+    datePicker.selectDate = [NSDate date];
+    datePicker.pickType = pickerType;
+    [LYSDatePickerController showDatePickerWithController:controller];
+}
+
+#pragma mark - 弹出日期选择器,附带类型和默认选中日期 -
++ (void)alertDatePickerInWindowRootVCWithType:(LYSDatePickerType)pickerType selectDate:(NSDate *)selectDate
+{
+    LYSDatePickerController *datePicker = [LYSDatePickerController shareInstance];
+    datePicker.selectDate = selectDate;
+    datePicker.pickType = pickerType;
+    [LYSDatePickerController showDatePickerInWindowRootVC];
+}
+
++ (void)alertDatePickerWithController:(UIViewController *)controller type:(LYSDatePickerType)pickerType selectDate:(NSDate *)selectDate
+{
+    LYSDatePickerController *datePicker = [LYSDatePickerController shareInstance];
+    datePicker.selectDate = selectDate;
+    datePicker.pickType = pickerType;
+    [LYSDatePickerController showDatePickerWithController:controller];;
 }
 
 - (void)viewDidLoad {
@@ -103,11 +109,9 @@ static LYSDatePickerController *datePicker = nil;
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
-    [self hiddenAnimationContentViewWithCompletion:^(BOOL finished) {
-        [self dismissViewControllerAnimated:NO completion:^{
-            datePicker = nil;
-        }];
-    }];
+    if (self.clickOuterHiddenEnable) {
+        [self hiddenDatePicker];
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -116,7 +120,9 @@ static LYSDatePickerController *datePicker = nil;
 }
 
 - (void)dealloc {
+#ifdef DEBUG
     NSLog(@"释放");
+#endif
 }
 
 @end

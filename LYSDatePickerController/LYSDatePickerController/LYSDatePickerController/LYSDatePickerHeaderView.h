@@ -7,7 +7,27 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "LYSDatePickerItem.h"
 
-@interface LYSDatePickerHeaderView : UIView
+@class LYSDateHeaderViewController;
+
+@protocol LYSDatePickerHeaderViewProtocol <NSObject>
+
+- (void)updateDate:(NSDate *)date;
+
+@end
+
+@interface LYSDatePickerHeaderView : UIView<LYSDatePickerHeaderViewProtocol>
+
+@property(nonatomic, weak)LYSDateHeaderViewController *headerVC;
+
+@property(nonatomic, strong)LYSDatePickerItem *leftItem;
+@property(nonatomic, strong)LYSDatePickerItem *rightItem;
+@property(nonatomic, strong)LYSDatePickerItem *centerItem;
+
+@property(nonatomic, assign)BOOL showTimeLabel;
+@property(nonatomic, strong)LYSDatePickerItem *tileLabelItem;
+
+@property(nonatomic, assign)CGFloat headerHeight;
 
 @end

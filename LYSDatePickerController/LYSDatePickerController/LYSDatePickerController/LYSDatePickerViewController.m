@@ -9,6 +9,10 @@
 #import "LYSDatePickerViewController.h"
 #import <objc/runtime.h>
 
+#define Rect(x,y,w,h) CGRectMake(x, y, w, h)
+#define ScreenWidth CGRectGetWidth([UIScreen mainScreen].bounds)
+#define ScreenHeight CGRectGetHeight([UIScreen mainScreen].bounds)
+
 @interface LYSDatePickerViewController ()
 
 // 选择器视图
@@ -23,7 +27,7 @@
     self = [super init];
     if (self) {
         // 默认选择器高度
-        self.pickViewHeight = 250;
+        self.pickViewHeight = 220;
     }
     return self;
 }
@@ -46,9 +50,9 @@
             headerViewHeight = CGRectGetHeight(self.headerView.frame);
         }
         if (self.showIndicator) {
-            headerViewHeight += 0.5;
+            headerViewHeight += self.indicatorHeight;
         }
-        _pickView = [[UIPickerView alloc] initWithFrame:CGRectMake(0, headerViewHeight, CGRectGetWidth(self.view.frame), self.pickViewHeight)];
+        _pickView = [[UIPickerView alloc] initWithFrame:CGRectMake(0, headerViewHeight, ScreenWidth, self.pickViewHeight)];
     }
     return _pickView;
 }
@@ -63,15 +67,5 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-/*
- #pragma mark - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- */
 
 @end

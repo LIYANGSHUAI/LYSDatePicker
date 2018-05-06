@@ -8,13 +8,21 @@
 
 #import "LYSDatePickerTypeTimeDelegate.h"
 
+#define IS5SBOOL CGSizeEqualToSize([UIScreen mainScreen].bounds.size, CGSizeMake(320, 568))
+#define IS6SBOOL CGSizeEqualToSize([UIScreen mainScreen].bounds.size, CGSizeMake(375, 667))
+#define IS6SPBOOL CGSizeEqualToSize([UIScreen mainScreen].bounds.size, CGSizeMake(414, 736))
+#define ISXBOOL CGSizeEqualToSize([UIScreen mainScreen].bounds.size, CGSizeMake(375, 812))
+
+#define WidthRank(A,B,C,D,E) (IS5SBOOL ? A : (IS6SBOOL ? B : (IS6SPBOOL ? C : (ISXBOOL ? D : E))))
+
 @implementation LYSDatePickerTypeTimeDelegate
 
-#pragma mark - UIPickerView代理方法 -
-- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
+{
     return 2;
 }
-- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
+{
     switch (component) {
         case 0:
         {
@@ -31,16 +39,17 @@
     }
     return 0;
 }
-- (CGFloat)pickerView:(UIPickerView *)pickerView widthForComponent:(NSInteger)component {
+- (CGFloat)pickerView:(UIPickerView *)pickerView widthForComponent:(NSInteger)component
+{
     switch (component) {
         case 0:
         {
-            return CGRectGetWidth(self.view.frame) / 3.0;
+            return CGRectGetWidth(pickerView.frame) / WidthRank(5.5, 5.5, 5.5, 5.5, 5.5);
         }
             break;
         case 1:
         {
-            return CGRectGetWidth(self.view.frame) / 3.0;
+            return CGRectGetWidth(pickerView.frame) / WidthRank(5.5, 5.5, 5.5, 5.5, 5.5);
         }
             break;
         default:
@@ -48,10 +57,13 @@
     }
     return 0;
 }
-- (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view {
+- (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view
+{
     UILabel *label = [[UILabel alloc] init];
-    label.textAlignment = NSTextAlignmentCenter;
-    label.font = [UIFont systemFontOfSize:14];
+    label.textAlignment = self.titleLabel.textAlignment;
+    label.backgroundColor = self.titleLabel.backgroundColor;
+    label.font = self.titleLabel.font;
+    label.textColor = self.titleLabel.textColor;
     switch (component) {
         case 0:
         {
@@ -70,7 +82,8 @@
     }
     return label;
 }
-- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
+- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
+{
     switch (component) {
         case 0:
         {
@@ -85,10 +98,21 @@
         default:
             break;
     }
-    [self.pickView selectRow:0 inComponent:0 animated:NO];
-    [self.pickView selectRow:0 inComponent:1 animated:NO];
-    [pickerView reloadAllComponents];
-    [self updateDatePicker];
+    if (self.didSelectItem) {
+        self.didSelectItem([self dateWithHour:self.currentHour minute:self.currentMinute]);
+    }
+}
+
+- (NSDate *)dateWithHour:(int)hour minute:(int)minute
+{
+    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    unsigned unitFlags = NSCalendarUnitYear | NSCalendarUnitMonth |  NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond;
+    NSDateComponents *comps = [gregorian components:unitFlags fromDate:[NSDate date]];
+    //    [comps setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
+    [comps setHour:hour];
+    [comps setMinute:minute];
+    [comps setSecond:0];
+    return [gregorian dateFromComponents:comps];
 }
 
 // 拆分日期对象,获取时间粒度
@@ -99,6 +123,9 @@
     NSArray *currentDateAry = [currentDate componentsSeparatedByString:@"/"];
     self.currentHour = [[currentDateAry objectAtIndex:0] intValue];
     self.currentMinute = [[currentDateAry objectAtIndex:1] intValue];
+    if (self.didSelectItem) {
+        self.didSelectItem([self dateWithHour:self.currentHour minute:self.currentMinute]);
+    }
 }
 
 // 更新选择器

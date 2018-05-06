@@ -8,13 +8,21 @@
 
 #import "LYSDatePickerTypeDayAndTimeDelegate.h"
 
+#define IS5SBOOL CGSizeEqualToSize([UIScreen mainScreen].bounds.size, CGSizeMake(320, 568))
+#define IS6SBOOL CGSizeEqualToSize([UIScreen mainScreen].bounds.size, CGSizeMake(375, 667))
+#define IS6SPBOOL CGSizeEqualToSize([UIScreen mainScreen].bounds.size, CGSizeMake(414, 736))
+#define ISXBOOL CGSizeEqualToSize([UIScreen mainScreen].bounds.size, CGSizeMake(375, 812))
+
+#define WidthRank(A,B,C,D,E) (IS5SBOOL ? A : (IS6SBOOL ? B : (IS6SPBOOL ? C : (ISXBOOL ? D : E))))
+
 @implementation LYSDatePickerTypeDayAndTimeDelegate
 
-#pragma mark - UIPickerView代理方法 -
-- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
+{
     return 5;
 }
-- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
+{
     switch (component) {
         case 0:
         {
@@ -50,27 +58,27 @@
     switch (component) {
         case 0:
         {
-            return CGRectGetWidth(self.view.frame) / 5.0;
+            return CGRectGetWidth(pickerView.frame) / WidthRank(5.5, 5.5, 5.5, 5.5, 5.5);
         }
             break;
         case 1:
         {
-            return CGRectGetWidth(self.view.frame) / 6.0;
+            return CGRectGetWidth(pickerView.frame) / WidthRank(7.0, 7.0, 7.0, 7.0, 7.0);
         }
             break;
         case 2:
         {
-            return CGRectGetWidth(self.view.frame) / 4.0;
+            return CGRectGetWidth(pickerView.frame) / WidthRank(4.0, 4.0, 4.0, 4.0, 4.0);
         }
             break;
         case 3:
         {
-            return CGRectGetWidth(self.view.frame) / 6.0;
+            return CGRectGetWidth(pickerView.frame) / WidthRank(7.0, 7.0, 7.0, 7.0, 7.0);
         }
             break;
         case 4:
         {
-            return CGRectGetWidth(self.view.frame) / 6.0;
+            return CGRectGetWidth(pickerView.frame) / WidthRank(7.0, 7.0, 7.0, 7.0, 7.0);
         }
             break;
         default:
@@ -80,8 +88,10 @@
 }
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view {
     UILabel *label = [[UILabel alloc] init];
-    label.textAlignment = NSTextAlignmentCenter;
-    label.font = [UIFont systemFontOfSize:14];
+    label.textAlignment = self.titleLabel.textAlignment;
+    label.backgroundColor = self.titleLabel.backgroundColor;
+    label.font = self.titleLabel.font;
+    label.textColor = self.titleLabel.textColor;
     switch (component) {
         case 0:
         {
@@ -124,11 +134,13 @@
         case 0:
         {
             self.currentYear = [[self.years objectAtIndex:row] intValue];
+            [pickerView reloadComponent:2];
         }
             break;
         case 1:
         {
             self.currentMonth = [[self.months objectAtIndex:row] intValue];
+            [pickerView reloadComponent:2];
         }
             break;
         case 2:
@@ -149,15 +161,26 @@
         default:
             break;
     }
-    [self.pickView selectRow:0 inComponent:0 animated:NO];
-    [self.pickView selectRow:0 inComponent:1 animated:NO];
-    [self.pickView selectRow:0 inComponent:2 animated:NO];
-    [self.pickView selectRow:0 inComponent:3 animated:NO];
-    [self.pickView selectRow:0 inComponent:4 animated:NO];
-    [pickerView reloadAllComponents];
-    [self updateDatePicker];
+    
+    if (self.didSelectItem) {
+        self.didSelectItem([self dateWithYear:self.currentYear month:self.currentMonth day:self.currentDay hour:self.currentHour minute:self.currentMinute]);
+    }
 }
 
+- (NSDate *)dateWithYear:(int)year month:(int)month day:(int)day hour:(int)hour minute:(int)minute
+{
+    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    unsigned unitFlags = NSCalendarUnitYear | NSCalendarUnitMonth |  NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond;
+    NSDateComponents *comps = [gregorian components:unitFlags fromDate:[NSDate date]];
+    //    [comps setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
+    [comps setYear:year];
+    [comps setMonth:month];
+    [comps setDay:day];
+    [comps setHour:hour];
+    [comps setMinute:minute];
+    [comps setSecond:0];
+    return [gregorian dateFromComponents:comps];
+}
 
 // 拆分日期对象,获取时间粒度
 - (void)defaultWithDate:(NSDate *)date {
@@ -170,6 +193,9 @@
     self.currentDay = [[currentDateAry objectAtIndex:2] intValue];
     self.currentHour = [[currentDateAry objectAtIndex:3] intValue];
     self.currentMinute = [[currentDateAry objectAtIndex:4] intValue];
+    if (self.didSelectItem) {
+        self.didSelectItem([self dateWithYear:self.currentYear month:self.currentMonth day:self.currentDay hour:self.currentHour minute:self.currentMinute]);
+    }
 }
 
 // 更新选择器

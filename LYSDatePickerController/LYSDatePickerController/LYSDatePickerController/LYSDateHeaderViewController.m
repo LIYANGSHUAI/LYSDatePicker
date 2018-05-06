@@ -9,6 +9,10 @@
 #import "LYSDateHeaderViewController.h"
 #import <objc/runtime.h>
 
+#define Rect(x,y,w,h) CGRectMake(x, y, w, h)
+#define ScreenWidth CGRectGetWidth([UIScreen mainScreen].bounds)
+#define ScreenHeight CGRectGetHeight([UIScreen mainScreen].bounds)
+
 @interface LYSDateHeaderViewController ()
 
 @end
@@ -48,12 +52,14 @@
     id tag = objc_getAssociatedObject(self.headerView, @"tag");
     if (tag && [tag boolValue]) {
         CGFloat headerViewHeight = self.pickHeaderHeight;
-        self.headerView.frame = CGRectMake(0, 0, CGRectGetWidth(self.view.frame), headerViewHeight);
+        self.headerView.frame = Rect(0, 0, ScreenWidth, headerViewHeight);
+        self.headerView.headerHeight = headerViewHeight;
+        self.headerView.headerVC = self;
         [self.contentView addSubview:self.headerView];
     } else {
         CGRect headerFrame = self.headerView.frame;
         headerFrame.origin = CGPointZero;
-        headerFrame.size.width = CGRectGetWidth(self.view.frame);
+        headerFrame.size.width = ScreenWidth;
         self.headerView.frame = headerFrame;
         [self.contentView addSubview:self.headerView];
     }
@@ -63,15 +69,5 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-/*
- #pragma mark - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- */
 
 @end
