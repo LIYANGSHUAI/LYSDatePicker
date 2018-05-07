@@ -43,12 +43,24 @@
 
 - (NSArray<NSString *> *)weekDays
 {
-    return [self.pickerManager fetchDaysAndWeekDayWithYear:self.currentYear month:self.currentMonth isShortWeekName:NO];
+    if (self.weakDayType == LYSDatePickerWeakDayTypeCNDefault) {
+        return [self.pickerManager fetchDaysAndWeekDayWithYear:self.currentYear month:self.currentMonth isShortWeekName:NO identifier:@"zh_CN"];
+    }
+    if (self.weakDayType == LYSDatePickerWeakDayTypeUSDefault) {
+        return [self.pickerManager fetchDaysAndWeekDayWithYear:self.currentYear month:self.currentMonth isShortWeekName:NO identifier:@"en_US"];
+    }
+    return [self.pickerManager fetchDaysAndWeekDayWithYear:self.currentYear month:self.currentMonth isShortWeekName:NO identifier:@"zh_CN"];
 }
 
 - (NSArray<NSString *> *)weekDaysShortName
 {
-    return [self.pickerManager fetchDaysAndWeekDayWithYear:self.currentYear month:self.currentMonth isShortWeekName:YES];
+    if (self.weakDayType == LYSDatePickerWeakDayTypeCNShort) {
+        return [self.pickerManager fetchDaysAndWeekDayWithYear:self.currentYear month:self.currentMonth isShortWeekName:YES identifier:@"zh_CN"];
+    }
+    if (self.weakDayType == LYSDatePickerWeakDayTypeUSShort) {
+        return [self.pickerManager fetchDaysAndWeekDayWithYear:self.currentYear month:self.currentMonth isShortWeekName:YES identifier:@"en_US"];
+    }
+    return [self.pickerManager fetchDaysAndWeekDayWithYear:self.currentYear month:self.currentMonth isShortWeekName:YES identifier:@"zh_CN"];
 }
 
 - (NSArray<NSString *> *)hours

@@ -16,7 +16,7 @@
 // 获取天列表(不包含星期几)
 - (NSArray<NSString *> *)fetchDaysWithYear:(int)year month:(int)month;
 // 获取日列表(包含星期几)
-- (NSArray<NSString *> *)fetchDaysAndWeekDayWithYear:(int)year month:(int)month isShortWeekName:(BOOL)isShortName;
+- (NSArray<NSString *> *)fetchDaysAndWeekDayWithYear:(int)year month:(int)month isShortWeekName:(BOOL)isShortName identifier:(NSString *)identifier;
 // 获取小时
 - (NSArray<NSString *> *)fetchHour;
 // 获取分钟

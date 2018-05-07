@@ -8,6 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
+typedef enum : NSUInteger {
+    LYSDatePickerWeakDayTypeCNDefault,
+    LYSDatePickerWeakDayTypeCNShort,
+    LYSDatePickerWeakDayTypeUSDefault,
+    LYSDatePickerWeakDayTypeUSShort
+} LYSDatePickerWeakDayType;
+
 @interface LYSDatePickerTypeBase : NSObject<UIPickerViewDataSource,UIPickerViewDelegate>
 
 @property (nonatomic,weak)UIPickerView *pickView;
@@ -28,6 +35,15 @@
 @property (nonatomic,assign)int currentDay;
 @property (nonatomic,assign)int currentHour;
 @property (nonatomic,assign)int currentMinute;
+
+@property(nonatomic, assign)BOOL yearLoop;
+@property(nonatomic, assign)BOOL monthLoop;
+@property(nonatomic, assign)BOOL dayLoop;
+@property(nonatomic, assign)BOOL hourLoop;
+@property(nonatomic, assign)BOOL minuteLoop;
+
+@property(nonatomic, assign)BOOL showWeakDay;
+@property(nonatomic, assign)LYSDatePickerWeakDayType weakDayType;
 
 @property (nonatomic,strong,readonly)NSArray<NSString *> *years;
 @property (nonatomic,strong,readonly)NSArray<NSString *> *months;

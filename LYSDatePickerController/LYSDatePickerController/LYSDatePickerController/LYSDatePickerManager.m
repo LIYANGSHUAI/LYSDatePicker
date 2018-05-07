@@ -92,7 +92,7 @@
 }
 
 // 获取日列表(包含星期几)
-- (NSArray<NSString *> *)fetchDaysAndWeekDayWithYear:(int)year month:(int)month isShortWeekName:(BOOL)isShortName
+- (NSArray<NSString *> *)fetchDaysAndWeekDayWithYear:(int)year month:(int)month isShortWeekName:(BOOL)isShortName identifier:(NSString *)identifier
 {
     BOOL isCan = _weekday_year == year && _weekday_month == month && _weekdays && [_weekdays count] > 0;
     if (!isCan) {
@@ -104,7 +104,13 @@
         NSMutableArray *tempAry = [NSMutableArray array];
         for (int i = 1; i <= length; i++) {
             [comps setDay:i];
-            NSString *str = [NSString stringWithFormat:@"%@",[self fetchWeekdayCNNameWithDate:[self.gregorian dateFromComponents:comps] isShortName:isShortName]];
+            NSString *str = @"";
+            if ([identifier isEqualToString:@"zh_CN"]) {
+                str = [self fetchWeekdayCNNameWithDate:[self.gregorian dateFromComponents:comps] isShortName:isShortName];
+            }
+            if ([identifier isEqualToString:@"en_US"]) {
+                str = [self fetchWeekdayENNameWithDate:[self.gregorian dateFromComponents:comps] isShortName:isShortName];
+            }
             [tempAry addObject:str];
         }
         _weekdays = tempAry;_weekday_month = month;_weekday_year = year;

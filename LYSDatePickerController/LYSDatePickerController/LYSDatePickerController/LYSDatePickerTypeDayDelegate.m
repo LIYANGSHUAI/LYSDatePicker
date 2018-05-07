@@ -27,17 +27,17 @@
     switch (component) {
         case 0:
         {
-            return [self.years count];
+            return [self.years count] * (self.yearLoop ? 100 : 1);
         }
             break;
         case 1:
         {
-            return [self.months count];
+            return [self.months count] * (self.monthLoop ? 100 : 1);
         }
             break;
         case 2:
         {
-            return [self.days count];
+            return [self.days count] * (self.dayLoop ? 100 : 1);
         }
             break;
         default:
@@ -60,7 +60,11 @@
             break;
         case 2:
         {
-            return CGRectGetWidth(pickerView.frame) / WidthRank(4.0, 4.0, 4.0, 4.0, 4.0);
+            if (self.showWeakDay && self.weakDayType == LYSDatePickerWeakDayTypeUSDefault) {
+                return CGRectGetWidth(pickerView.frame) / WidthRank(3.0, 3.0, 3.0, 3.0, 3.0);
+            } else {
+                return CGRectGetWidth(pickerView.frame) / WidthRank(4.0, 4.0, 4.0, 4.0, 4.0);
+            }
         }
             break;
         default:
@@ -75,25 +79,34 @@
     label.backgroundColor = self.titleLabel.backgroundColor;
     label.font = self.titleLabel.font;
     label.textColor = self.titleLabel.textColor;
-    label.backgroundColor = [UIColor redColor];
     switch (component) {
         case 0:
         {
-            id str = [self.years objectAtIndex:row];
+            id str = [self.years objectAtIndex:(row % [[self years] count])];
             label.text = [NSString stringWithFormat:@"%@年",str];
         }
             break;
         case 1:
         {
-            id str = [self.months objectAtIndex:row];
+            id str = [self.months objectAtIndex:(row % [[self months] count])];
             label.text = [NSString stringWithFormat:@"%@月",str];
         }
             break;
         case 2:
         {
-            id str = [self.days objectAtIndex:row];
-            id week = [self.weekDays objectAtIndex:row];
-            label.text = [NSString stringWithFormat:@"%@日 %@",str,week];
+            id str = [self.days objectAtIndex:(row % [[self days] count])];
+            if (self.showWeakDay) {
+                id week = @"";
+                if (self.weakDayType == LYSDatePickerWeakDayTypeUSShort || self.weakDayType == LYSDatePickerWeakDayTypeCNShort) {
+                    week = [self.weekDaysShortName objectAtIndex:(row % [[self weekDaysShortName] count])];
+                }
+                if (self.weakDayType == LYSDatePickerWeakDayTypeUSDefault || self.weakDayType == LYSDatePickerWeakDayTypeCNDefault) {
+                    week = [self.weekDays objectAtIndex:(row % [[self weekDays] count])];
+                }
+                label.text = [NSString stringWithFormat:@"%@日 %@",str,week];
+            }else {
+                label.text = [NSString stringWithFormat:@"%@日",str];
+            }
         }
             break;
         default:
@@ -105,19 +118,19 @@
     switch (component) {
         case 0:
         {
-            self.currentYear = [[self.years objectAtIndex:row] intValue];
+            self.currentYear = [[self.years objectAtIndex:(row % [[self years] count])] intValue];
             [pickerView reloadComponent:2];
         }
             break;
         case 1:
         {
-            self.currentMonth = [[self.months objectAtIndex:row] intValue];
+            self.currentMonth = [[self.months objectAtIndex:(row % [[self months] count])] intValue];
             [pickerView reloadComponent:2];
         }
             break;
         case 2:
         {
-            self.currentDay = [[self.days objectAtIndex:row] intValue];
+            self.currentDay = [[self.days objectAtIndex:(row % [[self days] count])] intValue];
         }
             break;
         default:

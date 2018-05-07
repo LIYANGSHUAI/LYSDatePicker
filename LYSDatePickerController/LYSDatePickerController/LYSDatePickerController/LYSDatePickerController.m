@@ -58,6 +58,54 @@
     datePicker.delegate = delegate;
 }
 
+#pragma mark - 监听日期选择回调 -
++ (void)customdidSelectDatePicker:(void(^)(NSDate *date))didSelectDatePicker {
+    LYSDatePickerController *datePicker = [LYSDatePickerController shareInstance];
+    datePicker.didSelectDatePicker = didSelectDatePicker;
+}
+
+#pragma mark - 点击页面空白部分是否隐藏日期选择器 -
++ (void)customClickOuterHiddenEnable:(BOOL)clickOuterHiddenEnable {
+    LYSDatePickerController *datePicker = [LYSDatePickerController shareInstance];
+    datePicker.clickOuterHiddenEnable = clickOuterHiddenEnable;
+}
+
+#pragma mark - 设置头视图高度 -
++ (void)customPickHeaderHeight:(CGFloat)pickHeaderHeight {
+    LYSDatePickerController *datePicker = [LYSDatePickerController shareInstance];
+    datePicker.pickHeaderHeight = pickHeaderHeight;
+}
+#pragma mark - 自定义头视图 -
++ (void)customHeaderView:(LYSDatePickerHeaderView *)headerView {
+    LYSDatePickerController *datePicker = [LYSDatePickerController shareInstance];
+    datePicker.headerView = headerView;
+}
+#pragma mark - 设置是否显示分割线 -
++ (void)customShowIndicator:(BOOL)showIndicator {
+    LYSDatePickerController *datePicker = [LYSDatePickerController shareInstance];
+    datePicker.showIndicator = showIndicator;
+}
+#pragma mark - 设置分割线颜色 -
++ (void)customIndicatorColor:(UIColor *)indicatorColor {
+    LYSDatePickerController *datePicker = [LYSDatePickerController shareInstance];
+    datePicker.indicatorColor = indicatorColor;
+}
+#pragma mark - 设置分割线高度 -
++ (void)customIndicatorHeight:(CGFloat)indicatorHeight {
+    LYSDatePickerController *datePicker = [LYSDatePickerController shareInstance];
+    datePicker.indicatorHeight = indicatorHeight;
+}
+// 设置是否显示星期几
++ (void)customShowWeakDay:(BOOL)showWeakDay {
+    LYSDatePickerController *datePicker = [LYSDatePickerController shareInstance];
+    datePicker.showWeakDay = showWeakDay;
+}
+// 设置是星期类型
++ (void)customWeakDayType:(BOOL)showWeakDay {
+    LYSDatePickerController *datePicker = [LYSDatePickerController shareInstance];
+    datePicker.showWeakDay = showWeakDay;
+}
+
 #pragma mark - 弹出日期选择器 -
 + (void)alertDatePickerInWindowRootVC
 {

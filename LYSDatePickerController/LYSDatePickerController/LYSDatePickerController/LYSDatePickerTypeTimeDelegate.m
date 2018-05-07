@@ -22,17 +22,18 @@
 {
     return 2;
 }
+
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
 {
     switch (component) {
         case 0:
         {
-            return [self.hours count];
+            return [self.hours count] * (self.hourLoop ? 100 : 1);
         }
             break;
         case 1:
         {
-            return [self.minutes count];
+            return [self.minutes count] * (self.minuteLoop ? 100 : 1);
         }
             break;
         default:
@@ -65,17 +66,16 @@
     label.backgroundColor = self.titleLabel.backgroundColor;
     label.font = self.titleLabel.font;
     label.textColor = self.titleLabel.textColor;
-    label.backgroundColor = [UIColor redColor];
     switch (component) {
         case 0:
         {
-            id str = [self.hours objectAtIndex:row];
+            id str = [self.hours objectAtIndex:(row % [[self hours] count])];
             label.text = [NSString stringWithFormat:@"%@时",str];
         }
             break;
         case 1:
         {
-            id str = [self.minutes objectAtIndex:row];
+            id str = [self.minutes objectAtIndex:(row % [[self minutes] count])];
             label.text = [NSString stringWithFormat:@"%@分",str];
         }
             break;
@@ -89,12 +89,12 @@
     switch (component) {
         case 0:
         {
-            self.currentHour = [[self.hours objectAtIndex:row] intValue];
+            self.currentHour = [[self.hours objectAtIndex:(row % [[self hours] count])] intValue];
         }
             break;
         case 1:
         {
-            self.currentMinute = [[self.minutes objectAtIndex:row] intValue];
+            self.currentMinute = [[self.minutes objectAtIndex:(row % [[self minutes] count])] intValue];
         }
             break;
         default:

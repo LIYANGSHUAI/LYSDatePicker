@@ -8,17 +8,13 @@
 
 #import "LYSDateContentView.h"
 
-#define Rect(x,y,w,h) CGRectMake(x, y, w, h)
-#define ScreenWidth CGRectGetWidth([UIScreen mainScreen].bounds)
-#define ScreenHeight CGRectGetHeight([UIScreen mainScreen].bounds)
-
 @implementation LYSDateContentView
 
 - (instancetype)init
 {
     self = [super init];
     if (self) {
-        self.frame = CGRectMake(0, ScreenHeight, ScreenWidth, 0);
+        self.frame = CGRectMake(0, CGRectGetHeight([UIScreen mainScreen].bounds), CGRectGetWidth([UIScreen mainScreen].bounds), 0);
     }
     return self;
 }
@@ -34,7 +30,8 @@
     self.frame = contentFrame;
 }
 
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+// 禁止事件向下传递
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     
 }
 

@@ -15,8 +15,6 @@
 static NSMutableArray *useingLabelAry = nil;
 static NSMutableArray *spareLabelAry = nil;
 
-static int num = 0;
-
 @implementation LYSDatePickerLabel
 
 + (instancetype)Label
@@ -36,8 +34,6 @@ static int num = 0;
         label.frame = CGRectZero;
         return label;
     } else {
-        NSLog(@"创建");
-        num++;
         LYSDatePickerLabel *label = [[LYSDatePickerLabel alloc] init];
         [useingLabelAry addObject:label];
         return label;
@@ -50,13 +46,10 @@ static int num = 0;
         [spareLabelAry addObject:self];
         [useingLabelAry removeObject:self];
     }
-    NSLog(@"创建了:%d个label",num);
-//    NSLog(@"线上:%@",useingLabelAry);
-//    NSLog(@"后备:%@",spareLabelAry);
-}
-
-- (void)dealloc {
-    NSLog(@"释放lablel");
+    if (useingLabelAry.count == 0) {
+        useingLabelAry = nil;
+        spareLabelAry = nil;
+    }
 }
 
 /*

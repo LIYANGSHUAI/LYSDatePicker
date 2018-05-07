@@ -34,8 +34,8 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    self.view.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.2];
-    self.view.alpha = 0;
+//    self.view.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.2];
+//    self.view.alpha = 0;
     // 设置内容视图
     [self initContentView];
 }
@@ -69,7 +69,7 @@
     CGFloat contentHeight = CGRectGetHeight(self.contentView.frame);
     CGFloat tabHeight = [self superExistTab] ? 49 : 0;
     [UIView animateWithDuration:0.2 delay:0 options:(UIViewAnimationOptionCurveEaseOut) animations:^{
-        self.view.alpha = 1;
+//        self.view.alpha = 1;
         self.contentView.frame = Rect(0, ScreenHeight - contentHeight - tabHeight, ScreenWidth, contentHeight);
     } completion:^(BOOL finished) {
         [[NSNotificationCenter defaultCenter] postNotificationName:LYSDatePickerDidAppearNotifition object:nil];

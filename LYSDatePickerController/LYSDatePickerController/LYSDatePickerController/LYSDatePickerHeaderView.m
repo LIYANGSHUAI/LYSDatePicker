@@ -16,6 +16,7 @@
     self = [super init];
     if (self) {
         self.showTimeLabel = YES;
+        self.titleDateFormat = @"yyyy-MM-dd HH:mm:ss";
         [self customSubViews];
     }
     return self;
@@ -122,7 +123,7 @@
 - (void)updateDate:(NSDate *)date {
     if (self.showTimeLabel) {
         NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-        [dateFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+        [dateFormat setDateFormat:self.titleDateFormat];
         self.tileLabelItem.title = [dateFormat stringFromDate:date];
         [self.tileLabelItem updateSize];
         CGRect titleLabelItemFrame = self.tileLabelItem.itemView.frame;

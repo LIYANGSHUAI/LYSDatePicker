@@ -86,11 +86,19 @@
     
     self.typeBase.fromYear = self.fromYear;
     self.typeBase.toYear = self.toYear;
+    self.typeBase.titleLabel = self.subLabel;
+    
+    self.typeBase.yearLoop = self.yearLoop;
+    self.typeBase.monthLoop = self.monthLoop;
+    self.typeBase.dayLoop = self.dayLoop;
+    self.typeBase.hourLoop = self.hourLoop;
+    self.typeBase.minuteLoop = self.minuteLoop;
+    
+    self.typeBase.showWeakDay = self.showWeakDay;
+    self.typeBase.weakDayType = self.weakDayType;
     
     self.pickView.delegate = self.typeBase;
     self.pickView.dataSource = self.typeBase;
-    
-    self.typeBase.titleLabel = self.subLabel;
     
     __weak LYSDateLogicViewController *weakSelf = self;
     [self.typeBase setDidSelectItem:^(NSDate *date) {

@@ -28,27 +28,27 @@
     switch (component) {
         case 0:
         {
-            return [self.years count] * 100;
+            return [self.years count] * (self.yearLoop ? 100 : 1);
         }
             break;
         case 1:
         {
-            return [self.months count] * 100;
+            return [self.months count] * (self.monthLoop ? 100 : 1);
         }
             break;
         case 2:
         {
-            return [self.days count] * 100;
+            return [self.days count] * (self.dayLoop ? 100 : 1);
         }
             break;
         case 3:
         {
-            return [self.hours count] * 100;
+            return [self.hours count] * (self.hourLoop ? 100 : 1);
         }
             break;
         case 4:
         {
-            return [self.minutes count] * 100;
+            return [self.minutes count] * (self.minuteLoop ? 100 : 1);
         }
             break;
         default:
@@ -71,7 +71,11 @@
             break;
         case 2:
         {
-            return CGRectGetWidth(pickerView.frame) / WidthRank(4.0, 4.0, 4.0, 4.0, 4.0);
+            if (self.showWeakDay && self.weakDayType == LYSDatePickerWeakDayTypeUSDefault) {
+                return CGRectGetWidth(pickerView.frame) / WidthRank(3.0, 3.0, 3.0, 3.0, 3.0);
+            } else {
+                return CGRectGetWidth(pickerView.frame) / WidthRank(4.0, 4.0, 4.0, 4.0, 4.0);
+            }
         }
             break;
         case 3:
@@ -96,36 +100,45 @@
     label.backgroundColor = self.titleLabel.backgroundColor;
     label.font = self.titleLabel.font;
     label.textColor = self.titleLabel.textColor;
-    label.backgroundColor = [UIColor redColor];
     switch (component) {
         case 0:
         {
-            id str = [self.years objectAtIndex:(row% [[self years] count])];
+            id str = [self.years objectAtIndex:(row % [[self years] count])];
             label.text = [NSString stringWithFormat:@"%@年",str];
         }
             break;
         case 1:
         {
-            id str = [self.months objectAtIndex:(row% [[self months] count])];
+            id str = [self.months objectAtIndex:(row % [[self months] count])];
             label.text = [NSString stringWithFormat:@"%@月",str];
         }
             break;
         case 2:
         {
-            id str = [self.days objectAtIndex:(row% [[self days] count])];
-            id week = [self.weekDays objectAtIndex:(row% [[self weekDays] count])];
-            label.text = [NSString stringWithFormat:@"%@日 %@",str,week];
+            id str = [self.days objectAtIndex:(row % [[self days] count])];
+            if (self.showWeakDay) {
+                id week = @"";
+                if (self.weakDayType == LYSDatePickerWeakDayTypeUSShort || self.weakDayType == LYSDatePickerWeakDayTypeCNShort) {
+                    week = [self.weekDaysShortName objectAtIndex:(row % [[self weekDaysShortName] count])];
+                }
+                if (self.weakDayType == LYSDatePickerWeakDayTypeUSDefault || self.weakDayType == LYSDatePickerWeakDayTypeCNDefault) {
+                    week = [self.weekDays objectAtIndex:(row % [[self weekDays] count])];
+                }
+                label.text = [NSString stringWithFormat:@"%@日 %@",str,week];
+            }else {
+                label.text = [NSString stringWithFormat:@"%@日",str];
+            }
         }
             break;
         case 3:
         {
-            id str = [self.hours objectAtIndex:(row% [[self hours] count])];
+            id str = [self.hours objectAtIndex:(row % [[self hours] count])];
             label.text = [NSString stringWithFormat:@"%@时",str];
         }
             break;
         case 4:
         {
-            id str = [self.minutes objectAtIndex:(row% [[self minutes] count])];
+            id str = [self.minutes objectAtIndex:(row % [[self minutes] count])];
             label.text = [NSString stringWithFormat:@"%@分",str];
         }
             break;
@@ -139,29 +152,29 @@
     switch (component) {
         case 0:
         {
-            self.currentYear = [[self.years objectAtIndex:(row% [[self years] count])] intValue];
+            self.currentYear = [[self.years objectAtIndex:(row % [[self years] count])] intValue];
             [pickerView reloadComponent:2];
         }
             break;
         case 1:
         {
-            self.currentMonth = [[self.months objectAtIndex:(row% [[self months] count])] intValue];
+            self.currentMonth = [[self.months objectAtIndex:(row % [[self months] count])] intValue];
             [pickerView reloadComponent:2];
         }
             break;
         case 2:
         {
-            self.currentDay = [[self.days objectAtIndex:(row% [[self days] count])] intValue];
+            self.currentDay = [[self.days objectAtIndex:(row % [[self days] count])] intValue];
         }
             break;
         case 3:
         {
-            self.currentHour = [[self.hours objectAtIndex:(row% [[self hours] count])] intValue];
+            self.currentHour = [[self.hours objectAtIndex:(row % [[self hours] count])] intValue];
         }
             break;
         case 4:
         {
-            self.currentMinute = [[self.minutes objectAtIndex:(row% [[self minutes] count])] intValue];
+            self.currentMinute = [[self.minutes objectAtIndex:(row % [[self minutes] count])] intValue];
         }
             break;
         default:
@@ -178,7 +191,7 @@
     NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     unsigned unitFlags = NSCalendarUnitYear | NSCalendarUnitMonth |  NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond;
     NSDateComponents *comps = [gregorian components:unitFlags fromDate:[NSDate date]];
-    //    [comps setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
+//        [comps setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
     [comps setYear:year];
     [comps setMonth:month];
     [comps setDay:day];
