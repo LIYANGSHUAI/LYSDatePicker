@@ -6,7 +6,7 @@
 //  Copyright © 2018年 liyangshuai. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "LYSDateBasicViewController.h"
 #import "LYSDatePickerSelectDelegate.h"
 
 extern NSString *const LYSDatePickerWillAppearNotifition;           // 窗口将要出现
@@ -17,7 +17,7 @@ extern NSString *const LYSDatePickerDidDisAppearNotifition;         // 窗口已
 extern NSString *const LYSDatePickerDidCancelNotifition;            // 取消弹窗
 extern NSString *const LYSDatePickerDidSelectDateNotifition;        // 提交日期
 
-@interface LYSDateBaseViewController : UIViewController
+@interface LYSDateBaseViewController : LYSDateBasicViewController
 
 // 监听代理
 @property(nonatomic, assign)id<LYSDatePickerSelectDelegate> delegate;
@@ -36,12 +36,8 @@ extern NSString *const LYSDatePickerDidSelectDateNotifition;        // 提交日
 
 // 创建单例
 + (instancetype)shareInstance;
+
 // 释放单例
 + (void)shareRelease;
-
-// 获取最外层控制器
-+ (UIViewController *)getOuterViewController;
-// 创建给定颜色和透明度的图片
-- (UIImage *)imageWithColor:(UIColor *)color alpha:(CGFloat)alpha;
 
 @end

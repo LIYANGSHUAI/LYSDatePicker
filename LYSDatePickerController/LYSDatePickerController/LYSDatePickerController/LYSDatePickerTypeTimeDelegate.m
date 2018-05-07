@@ -7,6 +7,7 @@
 //
 
 #import "LYSDatePickerTypeTimeDelegate.h"
+#import "LYSDatePickerLabel.h"
 
 #define IS5SBOOL CGSizeEqualToSize([UIScreen mainScreen].bounds.size, CGSizeMake(320, 568))
 #define IS6SBOOL CGSizeEqualToSize([UIScreen mainScreen].bounds.size, CGSizeMake(375, 667))
@@ -59,11 +60,12 @@
 }
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view
 {
-    UILabel *label = [[UILabel alloc] init];
+    LYSDatePickerLabel *label = [LYSDatePickerLabel Label];
     label.textAlignment = self.titleLabel.textAlignment;
     label.backgroundColor = self.titleLabel.backgroundColor;
     label.font = self.titleLabel.font;
     label.textColor = self.titleLabel.textColor;
+    label.backgroundColor = [UIColor redColor];
     switch (component) {
         case 0:
         {

@@ -121,14 +121,14 @@
 
 // 在UIWindow的根视图上弹出
 - (void)showDatePickerInWindowRootVC {
-    [[[self class] getOuterViewController] presentViewController:self animated:NO completion:^{
+    [[[self class] windowRootViewController] presentViewController:self animated:NO completion:^{
         [self showAnimationContentViewWithCompletion:nil];
     }];
 }
 
 // 在UIWindow的根视图上弹出
 + (void)showDatePickerInWindowRootVC {
-    [[[self class] getOuterViewController] presentViewController:[[self class] shareInstance] animated:NO completion:^{
+    [[[self class] windowRootViewController] presentViewController:[[self class] shareInstance] animated:NO completion:^{
         [[[self class] shareInstance] showAnimationContentViewWithCompletion:nil];
     }];
 }

@@ -97,7 +97,7 @@
             datePicker.headerView.leftItem.textColor = [UIColor whiteColor];
             datePicker.headerView.rightItem.textColor = [UIColor whiteColor];
             datePicker.pickHeaderHeight = 40;
-            datePicker.pickType = LYSDatePickerTypeDayAndTime;
+            datePicker.pickType = LYSDatePickerTypeDay;
             datePicker.headerView.showTimeLabel = NO;
             [datePicker showDatePickerWithController:self];
         }

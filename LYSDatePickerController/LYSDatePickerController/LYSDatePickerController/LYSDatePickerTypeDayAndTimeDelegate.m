@@ -7,6 +7,7 @@
 //
 
 #import "LYSDatePickerTypeDayAndTimeDelegate.h"
+#import "LYSDatePickerLabel.h"
 
 #define IS5SBOOL CGSizeEqualToSize([UIScreen mainScreen].bounds.size, CGSizeMake(320, 568))
 #define IS6SBOOL CGSizeEqualToSize([UIScreen mainScreen].bounds.size, CGSizeMake(375, 667))
@@ -21,32 +22,33 @@
 {
     return 5;
 }
+
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
 {
     switch (component) {
         case 0:
         {
-            return [self.years count];
+            return [self.years count] * 100;
         }
             break;
         case 1:
         {
-            return [self.months count];
+            return [self.months count] * 100;
         }
             break;
         case 2:
         {
-            return [self.days count];
+            return [self.days count] * 100;
         }
             break;
         case 3:
         {
-            return [self.hours count];
+            return [self.hours count] * 100;
         }
             break;
         case 4:
         {
-            return [self.minutes count];
+            return [self.minutes count] * 100;
         }
             break;
         default:
@@ -54,6 +56,7 @@
     }
     return 0;
 }
+
 - (CGFloat)pickerView:(UIPickerView *)pickerView widthForComponent:(NSInteger)component {
     switch (component) {
         case 0:
@@ -86,41 +89,43 @@
     }
     return 0;
 }
+
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view {
-    UILabel *label = [[UILabel alloc] init];
+    LYSDatePickerLabel *label = [LYSDatePickerLabel Label];
     label.textAlignment = self.titleLabel.textAlignment;
     label.backgroundColor = self.titleLabel.backgroundColor;
     label.font = self.titleLabel.font;
     label.textColor = self.titleLabel.textColor;
+    label.backgroundColor = [UIColor redColor];
     switch (component) {
         case 0:
         {
-            id str = [self.years objectAtIndex:row];
+            id str = [self.years objectAtIndex:(row% [[self years] count])];
             label.text = [NSString stringWithFormat:@"%@年",str];
         }
             break;
         case 1:
         {
-            id str = [self.months objectAtIndex:row];
+            id str = [self.months objectAtIndex:(row% [[self months] count])];
             label.text = [NSString stringWithFormat:@"%@月",str];
         }
             break;
         case 2:
         {
-            id str = [self.days objectAtIndex:row];
-            id week = [self.weekDays objectAtIndex:row];
+            id str = [self.days objectAtIndex:(row% [[self days] count])];
+            id week = [self.weekDays objectAtIndex:(row% [[self weekDays] count])];
             label.text = [NSString stringWithFormat:@"%@日 %@",str,week];
         }
             break;
         case 3:
         {
-            id str = [self.hours objectAtIndex:row];
+            id str = [self.hours objectAtIndex:(row% [[self hours] count])];
             label.text = [NSString stringWithFormat:@"%@时",str];
         }
             break;
         case 4:
         {
-            id str = [self.minutes objectAtIndex:row];
+            id str = [self.minutes objectAtIndex:(row% [[self minutes] count])];
             label.text = [NSString stringWithFormat:@"%@分",str];
         }
             break;
@@ -129,33 +134,34 @@
     }
     return label;
 }
+
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
     switch (component) {
         case 0:
         {
-            self.currentYear = [[self.years objectAtIndex:row] intValue];
+            self.currentYear = [[self.years objectAtIndex:(row% [[self years] count])] intValue];
             [pickerView reloadComponent:2];
         }
             break;
         case 1:
         {
-            self.currentMonth = [[self.months objectAtIndex:row] intValue];
+            self.currentMonth = [[self.months objectAtIndex:(row% [[self months] count])] intValue];
             [pickerView reloadComponent:2];
         }
             break;
         case 2:
         {
-            self.currentDay = [[self.days objectAtIndex:row] intValue];
+            self.currentDay = [[self.days objectAtIndex:(row% [[self days] count])] intValue];
         }
             break;
         case 3:
         {
-            self.currentHour = [[self.hours objectAtIndex:row] intValue];
+            self.currentHour = [[self.hours objectAtIndex:(row% [[self hours] count])] intValue];
         }
             break;
         case 4:
         {
-            self.currentMinute = [[self.minutes objectAtIndex:row] intValue];
+            self.currentMinute = [[self.minutes objectAtIndex:(row% [[self minutes] count])] intValue];
         }
             break;
         default:
@@ -216,6 +222,5 @@
     [self.pickView selectRow:hourIndex inComponent:3 animated:NO];
     [self.pickView selectRow:minuteIndex inComponent:4 animated:NO];
 }
-
 
 @end
