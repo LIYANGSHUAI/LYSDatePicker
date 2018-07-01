@@ -7,6 +7,7 @@
 //
 
 #import "ViewController.h"
+#import "LYSDatePickerView.h"
 
 @interface ViewController ()
 
@@ -17,6 +18,11 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
+    
+    LYSDatePickerView *datePicker = [[LYSDatePickerView alloc] initWithFrame:CGRectMake(0, 200, CGRectGetWidth(self.view.frame), 200)type:(LYSDatePickerTypeSystem)];
+    
+    [self.view addSubview:datePicker];
+    
 }
 
 
