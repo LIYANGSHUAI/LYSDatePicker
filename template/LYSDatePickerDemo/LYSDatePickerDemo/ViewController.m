@@ -19,12 +19,17 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    LYSDatePickerView *datePicker = [[LYSDatePickerView alloc] initWithFrame:CGRectMake(0, 200, CGRectGetWidth(self.view.frame), 200)type:(LYSDatePickerTypeSystem)];
+    LYSDatePickerView *datePicker1 = [[LYSDatePickerView alloc] initWithFrame:CGRectMake(0, 20, CGRectGetWidth(self.view.frame), 250) type:(LYSDatePickerTypeSystem)];
+
+    [self.view addSubview:datePicker1];
     
-    [self.view addSubview:datePicker];
+    LYSDatePickerView *datePicker2 = [[LYSDatePickerView alloc] initWithFrame:CGRectMake(0, 270, CGRectGetWidth(self.view.frame), 250)type:(LYSDatePickerTypeCustom)];
+    
+    datePicker2.datePickerMode = LYSDatePickerModeYearAndDateAndTime;
+    
+    [self.view addSubview:datePicker2];
     
 }
-
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

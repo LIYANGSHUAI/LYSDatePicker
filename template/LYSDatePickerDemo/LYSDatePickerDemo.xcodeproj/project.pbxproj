@@ -472,15 +472,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 9P4CA2L57Y;
 				INFOPLIST_FILE = LYSDatePickerDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = lys.LYSDatePickerDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dx.zhenjiceshi;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE = "424916b8-a04e-464b-a421-39c79f8f6041";
+				PROVISIONING_PROFILE_SPECIFIER = zhenjiceshi;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -490,15 +491,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 9P4CA2L57Y;
 				INFOPLIST_FILE = LYSDatePickerDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = lys.LYSDatePickerDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dx.zhenjiceshi;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE = "424916b8-a04e-464b-a421-39c79f8f6041";
+				PROVISIONING_PROFILE_SPECIFIER = zhenjiceshi;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
