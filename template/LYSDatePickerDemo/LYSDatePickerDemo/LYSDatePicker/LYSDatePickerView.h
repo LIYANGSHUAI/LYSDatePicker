@@ -22,6 +22,12 @@ typedef NS_ENUM(NSInteger, LYSDatePickerMode) {
     LYSDatePickerModeYearAndDateAndTime // Show year and date and time   LYSDatePickerTypeCustom
 };
 
+typedef NS_ENUM(NSUInteger, LYSDatePickerStandard) {
+    LYSDatePickerStandard12Hour,
+    LYSDatePickerStandard24Hour,
+    LYSDatePickerStandardDefault = LYSDatePickerStandard24Hour
+};
+
 @interface LYSDatePickerView : UIView
 
 /// Whether to show the top status bar, the default is YES
@@ -37,6 +43,8 @@ typedef NS_ENUM(NSInteger, LYSDatePickerMode) {
 @property (nonatomic, strong) NSDate *date;
 @property (nonatomic, strong) NSDate *minimumDate;
 @property (nonatomic, strong) NSDate *maximumDate;
+
+@property(nonatomic, assign) LYSDatePickerStandard hourStandard;
 
 @property (nonatomic,assign) NSInteger fromYear;
 @property (nonatomic,assign) NSInteger toYear;
