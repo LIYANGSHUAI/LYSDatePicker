@@ -184,8 +184,17 @@ LYSPickerDate transformFromDate(NSDate *date)
     Layout(self.pickerView, Right,  Equal, self,  Right,          1.0f, 0).active = YES;
     Layout(self.pickerView, Bottom, Equal, self,  Bottom,         1.0f, 0).active = YES;
     
-    
+    [self initCurrentDate];
+}
+
+- (void)initCurrentDate
+{
     LYSPickerDate lysDate = transformFromDate(self.date);
+    self.currentYear = lysDate.year - self.fromYear - 1;
+    self.currentMonth = lysDate.month - 1;
+    self.currentDay = lysDate.day - 1;
+    self.currentHour = lysDate.hour - 1;
+    self.currentMinute = lysDate.minute - 1;
     
     switch (self.datePickerMode) {
         case LYSDatePickerModeTime:
@@ -210,7 +219,7 @@ LYSPickerDate transformFromDate(NSDate *date)
             break;
         case LYSDatePickerModeYearAndDate:
         {
-            [self.pickerView selectRow:lysDate.year inComponent:0 animated:YES];
+            [self.pickerView selectRow:lysDate.year-self.fromYear-1 inComponent:0 animated:YES];
             [self.pickerView selectRow:lysDate.month-1 inComponent:1 animated:YES];
             [self.pickerView selectRow:lysDate.day-1 inComponent:2 animated:YES];
         }
@@ -227,9 +236,7 @@ LYSPickerDate transformFromDate(NSDate *date)
         default:
             break;
     }
-    
 }
-
 
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
 {
@@ -313,7 +320,7 @@ LYSPickerDate transformFromDate(NSDate *date)
         {
             switch (component) {
                 case 0:
-                    return 100;
+                    return self.toYear - self.fromYear;
                     break;
                 case 1:
                     return 12;
@@ -362,6 +369,7 @@ LYSPickerDate transformFromDate(NSDate *date)
     UILabel *label = (UILabel *)view;
     if (!label) {
         label = [[UILabel alloc] init];
+        label.textAlignment = NSTextAlignmentCenter;
     }
     label.backgroundColor = [UIColor redColor];
     label.text = [self pickerView:pickerView titleForRow:row forComponent:component];
@@ -474,35 +482,162 @@ LYSPickerDate transformFromDate(NSDate *date)
 {
     switch (self.datePickerMode) {
         case LYSDatePickerModeTime:
-            
+        {
+            switch (component) {
+                case 0:
+                {
+                    self.currentHour = row + 1;
+                }
+                    break;
+                case 1:
+                {
+                    self.currentMinute = row + 1;
+                }
+                    break;
+                default:
+                    break;
+            }
+        }
             break;
         case LYSDatePickerModeDate:
-            
+        {
+            switch (component) {
+                case 0:
+                {
+                    self.currentMonth = row + 1;
+                    [self judgeLeapYearWith:1];
+                }
+                    break;
+                case 1:
+                {
+                    self.currentDay = row + 1;
+                }
+                    break;
+                default:
+                    break;
+            }
+        }
             break;
         case LYSDatePickerModeDateAndTime:
-            
+        {
+            switch (component) {
+                case 0:
+                {
+                    self.currentMonth = row + 1;
+                    [self judgeLeapYearWith:1];
+                }
+                    break;
+                case 1:
+                {
+                    self.currentDay = row + 1;
+                }
+                    break;
+                case 2:
+                {
+                    self.currentHour = row + 1;
+                }
+                    break;
+                case 3:
+                {
+                    self.currentMinute = row + 1;
+                }
+                    break;
+                default:
+                    break;
+            }
+        }
             break;
         case LYSDatePickerModeYearAndDate:
-            
+        {
+            switch (component) {
+                case 0:
+                {
+                    self.currentYear = self.fromYear + row + 1;
+                    [self judgeLeapYearWith:2];
+                }
+                    break;
+                case 1:
+                {
+                    self.currentMonth = row + 1;
+                    [self judgeLeapYearWith:2];
+                }
+                    break;
+                case 2:
+                {
+                    self.currentDay = row + 1;
+                }
+                    break;
+                default:
+                    break;
+            }
+        }
             break;
         case LYSDatePickerModeYearAndDateAndTime:
-            if (component == 1) {
-                if ([@[@1,@3,@5,@7,@8,@10,@12] containsObject:@(row+1)]) {
-                    self.dayNum = 31;
+        {
+            switch (component) {
+                case 0:
+                {
+                    self.currentYear = self.fromYear + row + 1;
+                    [self judgeLeapYearWith:2];
                 }
-                if ([@[@4,@6,@9,@11] containsObject:@(row+1)]) {
-                    self.dayNum = 30;
+                    break;
+                case 1:
+                {
+                    self.currentMonth = row + 1;
+                    [self judgeLeapYearWith:2];
                 }
-                if (row+1 == 2) {
-                    self.dayNum = 28;
+                    break;
+                case 2:
+                {
+                    self.currentDay = row + 1;
                 }
-                [pickerView reloadComponent:2];
+                    break;
+                case 3:
+                {
+                    self.currentHour = row + 1;
+                }
+                    break;
+                case 4:
+                {
+                    self.currentMinute = row + 1;
+                }
+                    break;
+                default:
+                    break;
             }
+        }
             break;
         default:
             
             break;
     }
+}
+
+- (void)judgeLeapYearWith:(NSInteger)index
+{
+    if ([@[@1,@3,@5,@7,@8,@10,@12] containsObject:@(self.currentMonth)]) {
+        self.dayNum = 31;
+    }
+    if ([@[@4,@6,@9,@11] containsObject:@(self.currentMonth)]) {
+        self.dayNum = 30;
+    }
+    if (self.currentMonth == 2) {
+        
+        if (self.currentYear % 100 == 0) {
+            if (self.currentYear % 400 == 0) {
+                self.dayNum = 29;
+            } else {
+                self.dayNum = 28;
+            }
+        } else {
+            if (self.currentYear % 4 == 0) {
+                self.dayNum = 29;
+            } else {
+                self.dayNum = 28;
+            }
+        }
+    }
+    [self.pickerView reloadComponent:index];
 }
 
 - (CGFloat)pickerView:(UIPickerView *)pickerView widthForComponent:(NSInteger)component
