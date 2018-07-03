@@ -10,25 +10,35 @@
 #import "LYSDateHeadrView.h"
 
 typedef NS_ENUM(NSInteger, LYSLayoutAttr) {
-    Left            = NSLayoutAttributeLeft,
-    Right           = NSLayoutAttributeRight,
-    Top             = NSLayoutAttributeTop,
-    Bottom          = NSLayoutAttributeBottom,
-    Leading         = NSLayoutAttributeLeading,
-    Trailing        = NSLayoutAttributeTrailing,
-    Width           = NSLayoutAttributeWidth,
-    Height          = NSLayoutAttributeHeight,
-    CenterX         = NSLayoutAttributeCenterX,
-    CenterY         = NSLayoutAttributeCenterY,
-    NotAnAttribute  = NSLayoutAttributeNotAnAttribute
+    Left                    = NSLayoutAttributeLeft,                        // left
+    Right                   = NSLayoutAttributeRight,                       // right
+    Top                     = NSLayoutAttributeTop,                         // top
+    Bottom                  = NSLayoutAttributeBottom,                      // bottom
+    Width                   = NSLayoutAttributeWidth,                       // width
+    Height                  = NSLayoutAttributeHeight,                      // height
+    CenterX                 = NSLayoutAttributeCenterX,                     // centerX
+    CenterY                 = NSLayoutAttributeCenterY,                     // centerY
+    NotAnAttribute          = NSLayoutAttributeNotAnAttribute               // NotAnAttribute
 };
 
 typedef NS_ENUM(NSInteger, LYSLayoutRelation) {
-    LessThanOrEqual         = NSLayoutRelationLessThanOrEqual,
-    Equal                   = NSLayoutRelationEqual,
-    GreaterThanOrEqual      = NSLayoutRelationGreaterThanOrEqual,
+    LessThanOrEqual         = NSLayoutRelationLessThanOrEqual,              // LessThan
+    Equal                   = NSLayoutRelationEqual,                        // Equal
+    GreaterThanOrEqual      = NSLayoutRelationGreaterThanOrEqual,           // GreaterThan
 };
 
+/**
+ add a NSLayoutConstraint for View
+ 
+ @param from        setting View
+ @param attr1       LYSLayoutAttr
+ @param by          LYSLayoutRelation
+ @param to          reference View
+ @param attr2       LYSLayoutAttr
+ @param m           multiplier
+ @param c           constant
+ @return            NSLayoutConstraint
+ */
 NSLayoutConstraint * Layout(UIView *from, LYSLayoutAttr attr1, LYSLayoutRelation by, UIView *to, LYSLayoutAttr attr2, CGFloat m, CGFloat c)
 {
     return [NSLayoutConstraint constraintWithItem:from
@@ -40,6 +50,7 @@ NSLayoutConstraint * Layout(UIView *from, LYSLayoutAttr attr1, LYSLayoutRelation
                                          constant:c];
 }
 
+/// Parse an NSDate object to get basic information about the date
 typedef struct {
     NSInteger year;
     NSInteger month;
@@ -47,8 +58,15 @@ typedef struct {
     NSInteger hour;
     NSInteger minute;
     NSInteger week;
+    NSInteger timeType;
 } LYSPickerDate;
 
+/**
+ Convert an NSDate object to a LYSPickerDate type
+ 
+ @param date Incoming date
+ @return the LYSPickerDate type
+ */
 LYSPickerDate transformFromDate(NSDate *date)
 {
     LYSPickerDate lysDate;
@@ -57,30 +75,81 @@ LYSPickerDate transformFromDate(NSDate *date)
     lysDate.month = [component month];
     lysDate.day = [component day];
     lysDate.hour = [component hour];
+    lysDate.timeType = lysDate.hour <= 11 ? 0 : 1;
     lysDate.minute = [component minute];
     lysDate.week = [component weekday];
     return lysDate;
 }
 
+LYSPickerDate setPickerDateYear(LYSPickerDate date, NSInteger year)
+{
+    LYSPickerDate tempDate = date;
+    tempDate.year = year;
+    return tempDate;
+}
+
+LYSPickerDate setPickerDateMonth(LYSPickerDate date, NSInteger month)
+{
+    LYSPickerDate tempDate = date;
+    tempDate.month = month;
+    return tempDate;
+}
+
+LYSPickerDate setPickerDateDay(LYSPickerDate date, NSInteger day)
+{
+    LYSPickerDate tempDate = date;
+    tempDate.day = day;
+    return tempDate;
+}
+
+LYSPickerDate setPickerDateHour(LYSPickerDate date, NSInteger hour)
+{
+    LYSPickerDate tempDate = date;
+    tempDate.hour = hour;
+    return tempDate;
+}
+
+LYSPickerDate setPickerDateMinute(LYSPickerDate date, NSInteger minute)
+{
+    LYSPickerDate tempDate = date;
+    tempDate.minute = minute;
+    return tempDate;
+}
+
+#define Format(...) [NSString stringWithFormat:__VA_ARGS__]
+#define Crossroads(judge,A,B) (judge ? (A) : (B))
+#define Match(A,B) if (A) B
+
+#define Type(A) (self.type == (A))
+#define DatePickerMode(A) (self.datePickerMode == (A))
+#define HourStandard(A) (self.hourStandard == (A))
+
+//#define SwitchReturn(A,Arr)\
+//{\
+//id value = nil;\
+//value = [Arr objectAtIndex:A];\
+//value;\
+//}
+
 @interface LYSDatePickerView ()<UIPickerViewDelegate,UIPickerViewDataSource>
-@property(nonatomic, strong)  UIPickerView        *pickerView;
-@property (nonatomic,strong)  UIDatePicker        *datePicker;
-@property (nonatomic,assign)  NSInteger           currentYear;
-@property (nonatomic,assign)  NSInteger           currentMonth;
-@property (nonatomic,assign)  NSInteger           currentDay;
-@property (nonatomic,assign)  NSInteger           currentHour;
-@property (nonatomic,assign)  NSInteger           currentMinute;
-@property (nonatomic,assign)  NSInteger dayNum;
+@property (nonatomic, strong)  UIPickerView        *pickerView;
+@property (nonatomic, strong)  UIDatePicker        *datePicker;
+@property (nonatomic, assign)  LYSPickerDate       currentDate;
+@property (nonatomic, assign)  NSInteger           dayNum;
 @end
 
 @implementation LYSDatePickerView
 
+#pragma mark - Override initialization method -
 - (instancetype)initWithFrame:(CGRect)frame type:(LYSDatePickerType)type
 {
     self = [super initWithFrame:frame];
     if (self) {
         self.type = type;
         [self defaultParms];
+        
+        
+        
     }
     return self;
 }
@@ -103,7 +172,16 @@ LYSPickerDate transformFromDate(NSDate *date)
     return self;
 }
 
-/// 设置默认值
+/*
+ didMoveToSuperview This method is a parent class method, the current view has been added to the parent view trigger, the purpose of component rendering in this method is mainly to prevent the component from modifying some properties after initialization, can not immediately render the problem
+ */
+- (void)didMoveToSuperview
+{
+    [super didMoveToSuperview];
+    [self additionSubViews];
+}
+
+#pragma mark - Set default value -
 - (void)defaultParms
 {
     self.backgroundColor = [[UIColor grayColor] colorWithAlphaComponent:0.2];
@@ -117,28 +195,29 @@ LYSPickerDate transformFromDate(NSDate *date)
     self.hourStandard = LYSDatePickerStandardDefault;
 }
 
-- (void)didMoveToSuperview
-{
-    [self additionSubViews];
-}
-
-/// 添加子视图
+#pragma mark - Add a subview -
 - (void)additionSubViews
 {
     [self applyHeaderView];
-    if (self.type == LYSDatePickerTypeSystem) {
-        [self applySystemPicker];
+    Match(Type(LYSDatePickerTypeSystem), [self applySystemPicker];)
+    Match(Type(LYSDatePickerTypeCustom), [self applyCustomPicker];)
+}
+
+/*
+ In the case that enableShowHeader is YES, if the user does not set the headerView, but the headerHeight is not 0, this time, by default, a default top status bar LYSDateHeadrView is created.
+ */
+- (UIView<LYSDateHeaderViewProtocol> *)headerView
+{
+    if (!_headerView) {
+        _headerView = [[LYSDateHeadrView alloc] init];
     }
-    if (self.type == LYSDatePickerTypeCustom) {
-        [self applyCustomPicker];
-    }
+    return _headerView;
 }
 
 - (void)applyHeaderView
 {
     if (self.enableShowHeader)
     {
-        self.headerView = [[LYSDateHeadrView alloc] init];
         [self addSubview:self.headerView];
         self.headerView.translatesAutoresizingMaskIntoConstraints = NO;
         Layout(self.headerView,  Left,    Equal,  self,   Left,            1.0f, 0).active = YES;
@@ -160,7 +239,7 @@ LYSPickerDate transformFromDate(NSDate *date)
     [self addSubview:self.datePicker];
     self.datePicker.translatesAutoresizingMaskIntoConstraints = NO;
     
-    CGFloat height = self.enableShowHeader ? self.headerHeight : 0;
+    CGFloat height = Crossroads(self.enableShowHeader, self.headerHeight, 0);
     Layout(self.datePicker, Top,    Equal, self,  Top,            1.0f, height).active = YES;
     Layout(self.datePicker, Left,   Equal, self,  Left,           1.0f, 0).active = YES;
     Layout(self.datePicker, Right,  Equal, self,  Right,          1.0f, 0).active = YES;
@@ -175,227 +254,119 @@ LYSPickerDate transformFromDate(NSDate *date)
     [self addSubview:self.pickerView];
     self.pickerView.translatesAutoresizingMaskIntoConstraints = NO;
     
-    CGFloat height = self.enableShowHeader ? self.headerHeight : 0;
+    CGFloat height = Crossroads(self.enableShowHeader, self.headerHeight, 0);
     Layout(self.pickerView, Top,    Equal, self,  Top,            1.0f, height).active = YES;
     Layout(self.pickerView, Left,   Equal, self,  Left,           1.0f, 0).active = YES;
     Layout(self.pickerView, Right,  Equal, self,  Right,          1.0f, 0).active = YES;
     Layout(self.pickerView, Bottom, Equal, self,  Bottom,         1.0f, 0).active = YES;
+    
+    self.currentDate = transformFromDate(self.date);
     
     [self initCurrentDate];
 }
 
 - (void)initCurrentDate
 {
-    LYSPickerDate lysDate = transformFromDate(self.date);
-    self.currentYear = lysDate.year;
-    self.currentMonth = lysDate.month;
-    self.currentDay = lysDate.day;
-    if (self.hourStandard == LYSDatePickerStandard12Hour) {
-        self.currentHour = lysDate.hour == 0 ? 24 : lysDate.hour;
-    } else {
-        self.currentHour = lysDate.hour;
-    }
-    self.currentMinute = lysDate.minute;
-
-    switch (self.datePickerMode) {
-        case LYSDatePickerModeTime:
-        {
-            if (self.hourStandard == LYSDatePickerStandard12Hour) {
-                [self judgeHourTypeWith:2];
-                [self.pickerView selectRow:self.currentHour-1 inComponent:0 animated:YES];
-            }
-            if (self.hourStandard == LYSDatePickerStandard24Hour) {
-                [self.pickerView selectRow:self.currentHour inComponent:0 animated:YES];
-            }
-            [self.pickerView selectRow:lysDate.minute inComponent:1 animated:YES];
-        }
-            break;
-        case LYSDatePickerModeDate:
-        {
-            [self judgeLeapYearWith:1];
-            [self.pickerView selectRow:lysDate.month-1 inComponent:0 animated:YES];
-            [self.pickerView selectRow:lysDate.day-1 inComponent:1 animated:YES];
-        }
-            break;
-        case LYSDatePickerModeDateAndTime:
-        {
-            [self judgeLeapYearWith:1];
-            if (self.hourStandard == LYSDatePickerStandard12Hour) {
-                [self judgeHourTypeWith:4];
-                [self.pickerView selectRow:self.currentHour-1 inComponent:2 animated:YES];
-            }
-            if (self.hourStandard == LYSDatePickerStandard24Hour) {
-                [self.pickerView selectRow:self.currentHour inComponent:2 animated:YES];
-            }
-            [self.pickerView selectRow:lysDate.month-1 inComponent:0 animated:YES];
-            [self.pickerView selectRow:lysDate.day-1 inComponent:1 animated:YES];
-            [self.pickerView selectRow:lysDate.minute inComponent:3 animated:YES];
-        }
-            break;
-        case LYSDatePickerModeYearAndDate:
-        {
-            [self judgeLeapYearWith:2];
-            [self.pickerView selectRow:lysDate.year-self.fromYear-1 inComponent:0 animated:YES];
-            [self.pickerView selectRow:lysDate.month-1 inComponent:1 animated:YES];
-            [self.pickerView selectRow:lysDate.day-1 inComponent:2 animated:YES];
-        }
-            break;
-        case LYSDatePickerModeYearAndDateAndTime:
-        {
-            [self judgeLeapYearWith:2];
-            
-            if (self.hourStandard == LYSDatePickerStandard12Hour) {
-                [self judgeHourTypeWith:5];
-                NSLog(@"%ld",self.currentHour);
-                [self.pickerView selectRow:self.currentHour-1 inComponent:3 animated:YES];
-            }
-            if (self.hourStandard == LYSDatePickerStandard24Hour) {
-                [self.pickerView selectRow:self.currentHour inComponent:3 animated:YES];
-            }
-            [self.pickerView selectRow:lysDate.year-self.fromYear-1 inComponent:0 animated:YES];
-            [self.pickerView selectRow:lysDate.month-1 inComponent:1 animated:YES];
-            [self.pickerView selectRow:lysDate.day-1 inComponent:2 animated:YES];
-            [self.pickerView selectRow:lysDate.minute inComponent:4 animated:YES];
-        }
-            break;
-        default:
-            break;
-    }
+    Match(DatePickerMode(LYSDatePickerModeTime), {
+        NSInteger hourValue = 0;
+        Match(HourStandard(LYSDatePickerStandard24Hour), {hourValue = self.currentDate.hour;})
+        Match(HourStandard(LYSDatePickerStandard12Hour), {
+            hourValue = Crossroads(self.currentDate.hour == 0, 23, (self.currentDate.hour - 1));
+            [self judgeHourTypeWith:2];
+        })
+        [self.pickerView selectRow:hourValue inComponent:0 animated:YES];
+        [self.pickerView selectRow:self.currentDate.minute inComponent:1 animated:YES];
+    })
+    
+    Match(DatePickerMode(LYSDatePickerModeDate), {
+        [self judgeLeapYearWith:1];
+        [self.pickerView selectRow:self.currentDate.month-1 inComponent:0 animated:YES];
+        [self.pickerView selectRow:self.currentDate.day-1 inComponent:1 animated:YES];
+    })
+    
+    Match(DatePickerMode(LYSDatePickerModeDateAndTime), {
+        NSInteger hourValue = 0;
+        Match(HourStandard(LYSDatePickerStandard24Hour), {hourValue = self.currentDate.hour;})
+        Match(HourStandard(LYSDatePickerStandard12Hour), {
+            hourValue = Crossroads(self.currentDate.hour == 0, 23, (self.currentDate.hour - 1));
+            [self judgeHourTypeWith:4];
+        })
+        [self judgeLeapYearWith:1];
+        [self.pickerView selectRow:self.currentDate.month-1 inComponent:0 animated:YES];
+        [self.pickerView selectRow:self.currentDate.day-1 inComponent:1 animated:YES];
+        [self.pickerView selectRow:hourValue inComponent:2 animated:YES];
+        [self.pickerView selectRow:self.currentDate.minute inComponent:3 animated:YES];
+    })
+    
+    Match(DatePickerMode(LYSDatePickerModeYearAndDate), {
+        [self judgeLeapYearWith:2];
+        [self.pickerView selectRow:self.currentDate.year-self.fromYear-1 inComponent:0 animated:YES];
+        [self.pickerView selectRow:self.currentDate.month-1 inComponent:1 animated:YES];
+        [self.pickerView selectRow:self.currentDate.day-1 inComponent:2 animated:YES];
+    })
+    
+    Match(DatePickerMode(LYSDatePickerModeYearAndDateAndTime), {
+        NSInteger hourValue = 0;
+        Match(HourStandard(LYSDatePickerStandard24Hour), {hourValue = self.currentDate.hour;})
+        Match(HourStandard(LYSDatePickerStandard12Hour), {
+            hourValue = Crossroads(self.currentDate.hour == 0, 23, (self.currentDate.hour - 1));
+            [self judgeHourTypeWith:5];
+        })
+        [self judgeLeapYearWith:2];
+        [self.pickerView selectRow:self.currentDate.year-self.fromYear-1 inComponent:0 animated:YES];
+        [self.pickerView selectRow:self.currentDate.month-1 inComponent:1 animated:YES];
+        [self.pickerView selectRow:self.currentDate.day-1 inComponent:2 animated:YES];
+        [self.pickerView selectRow:hourValue inComponent:3 animated:YES];
+        [self.pickerView selectRow:self.currentDate.minute inComponent:4 animated:YES];
+    })
 }
 
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
 {
-    switch (self.datePickerMode) {
-        case LYSDatePickerModeTime:
-            return self.hourStandard == LYSDatePickerStandard12Hour ? 3 : 2;
-            break;
-        case LYSDatePickerModeDate:
-            return 2;
-            break;
-        case LYSDatePickerModeDateAndTime:
-            return self.hourStandard == LYSDatePickerStandard12Hour ? 5 : 4;
-            break;
-        case LYSDatePickerModeYearAndDate:
-            return 3;
-            break;
-        case LYSDatePickerModeYearAndDateAndTime:
-            return self.hourStandard == LYSDatePickerStandard12Hour ? 6 : 5;
-            break;
-        default:
-            return 0;
-            break;
-    }
+    Match(DatePickerMode(LYSDatePickerModeTime), {return Crossroads(HourStandard(LYSDatePickerStandard12Hour), 3, 2);})
+    Match(DatePickerMode(LYSDatePickerModeDate), {return 2;})
+    Match(DatePickerMode(LYSDatePickerModeDateAndTime), {return Crossroads(HourStandard(LYSDatePickerStandard12Hour), 5, 4);})
+    Match(DatePickerMode(LYSDatePickerModeYearAndDate), {return 3;})
+    Match(DatePickerMode(LYSDatePickerModeYearAndDateAndTime), {return Crossroads(HourStandard(LYSDatePickerStandard12Hour), 6, 5);})
+    return 0;
 }
 
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
 {
-    switch (self.datePickerMode) {
-        case LYSDatePickerModeTime:
-        {
-            switch (component) {
-                case 0:
-                    return 24;
-                    break;
-                case 1:
-                    return 60;
-                    break;
-                case 2:
-                    return 2;
-                    break;
-                default:
-                    return 0;
-                    break;
-            }
-        }
-            break;
-        case LYSDatePickerModeDate:
-        {
-            switch (component) {
-                case 0:
-                    return 12;
-                    break;
-                case 1:
-                    return self.dayNum;
-                    break;
-                default:
-                    return 0;
-                    break;
-            }
-        }
-            break;
-        case LYSDatePickerModeDateAndTime:
-        {
-            switch (component) {
-                case 0:
-                    return 12;
-                    break;
-                case 1:
-                    return self.dayNum;
-                    break;
-                case 2:
-                    return 24;
-                    break;
-                case 3:
-                    return 60;
-                    break;
-                case 4:
-                    return 2;
-                    break;
-                default:
-                    return 0;
-                    break;
-            }
-        }
-            break;
-        case LYSDatePickerModeYearAndDate:
-        {
-            switch (component) {
-                case 0:
-                    return self.toYear - self.fromYear;
-                    break;
-                case 1:
-                    return 12;
-                    break;
-                case 2:
-                    return self.dayNum;
-                    break;
-                default:
-                    return 0;
-                    break;
-            }
-        }
-            break;
-        case LYSDatePickerModeYearAndDateAndTime:
-        {
-            switch (component) {
-                case 0:
-                    return self.toYear - self.fromYear;
-                    break;
-                case 1:
-                    return 12;
-                    break;
-                case 2:
-                    return self.dayNum;
-                    break;
-                case 3:
-                    return 24;
-                    break;
-                case 4:
-                    return 60;
-                    break;
-                case 5:
-                    return 2;
-                    break;
-                default:
-                    return 0;
-                    break;
-            }
-        }
-            break;
-        default:
-            return 0;
-            break;
-    }
+    Match(DatePickerMode(LYSDatePickerModeTime), {
+        Match(component == 0, {return 24;});
+        Match(component == 1, {return 60;});
+        Match(component == 2, {return 2;});
+    })
+    
+    Match(DatePickerMode(LYSDatePickerModeDate), {
+        Match(component == 0, {return 12;});
+        Match(component == 1, {return self.dayNum;});
+    })
+    
+    Match(DatePickerMode(LYSDatePickerModeDateAndTime), {
+        Match(component == 0, {return 12;});
+        Match(component == 1, {return self.dayNum;});
+        Match(component == 2, {return 24;});
+        Match(component == 3, {return 60;});
+        Match(component == 4, {return 2;});
+    })
+    
+    Match(DatePickerMode(LYSDatePickerModeYearAndDate), {
+        Match(component == 0, {return self.toYear - self.fromYear;});
+        Match(component == 1, {return 12;});
+        Match(component == 2, {return self.dayNum;});
+    })
+    
+    Match(DatePickerMode(LYSDatePickerModeYearAndDateAndTime), {
+        Match(component == 0, {return self.toYear - self.fromYear;});
+        Match(component == 1, {return 12;});
+        Match(component == 2, {return self.dayNum;});
+        Match(component == 3, {return 24;});
+        Match(component == 4, {return 60;});
+        Match(component == 5, {return 2;});
+    })
+    return 0;
 }
 
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view
@@ -412,307 +383,130 @@ LYSPickerDate transformFromDate(NSDate *date)
 
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
 {
-    switch (self.datePickerMode) {
-        case LYSDatePickerModeTime:
-        {
-            switch (component) {
-                case 0:
-                {
-                    if (self.hourStandard == LYSDatePickerStandard24Hour) {
-                        return [NSString stringWithFormat:@"%ld",row];
-                    }
-                    if (self.hourStandard == LYSDatePickerStandard12Hour) {
-                        if (row <= 11) {
-                            return [NSString stringWithFormat:@"%ld",row+1];
-                        } else {
-                            return [NSString stringWithFormat:@"%ld",row+1-12];
-                        }
-                    }
-                    return [NSString stringWithFormat:@"%ld",row];
-                }
-                    break;
-                case 1:
-                    return [NSString stringWithFormat:@"%ld",row];
-                    break;
-                case 2:
-                    return row == 0 ? @"AM" : @"PM";
-                    break;
-                default:
-                    return 0;
-                    break;
-            }
-        }
-            break;
-        case LYSDatePickerModeDate:
-        {
-            switch (component) {
-                case 0:
-                    return [NSString stringWithFormat:@"%ld",row+1];
-                    break;
-                case 1:
-                    return [NSString stringWithFormat:@"%ld",row+1];
-                    break;
-                default:
-                    return 0;
-                    break;
-            }
-        }
-            break;
-        case LYSDatePickerModeDateAndTime:
-        {
-            switch (component) {
-                case 0:
-                    return [NSString stringWithFormat:@"%ld",row+1];
-                    break;
-                case 1:
-                    return [NSString stringWithFormat:@"%ld",row+1];
-                    break;
-                case 2:
-                {
-                    if (self.hourStandard == LYSDatePickerStandard24Hour) {
-                        return [NSString stringWithFormat:@"%ld",row];
-                    }
-                    if (self.hourStandard == LYSDatePickerStandard12Hour) {
-                        if (row <= 11) {
-                            return [NSString stringWithFormat:@"%ld",row+1];
-                        } else {
-                            return [NSString stringWithFormat:@"%ld",row+1-12];
-                        }
-                    }
-                    return [NSString stringWithFormat:@"%ld",row];
-                }
-                    break;
-                case 3:
-                    return [NSString stringWithFormat:@"%ld",row];
-                    break;
-                case 4:
-                    return row == 0 ? @"AM" : @"PM";
-                    break;
-                default:
-                    return 0;
-                    break;
-            }
-        }
-            break;
-        case LYSDatePickerModeYearAndDate:
-        {
-            switch (component) {
-                case 0:
-                    return [NSString stringWithFormat:@"%ld",self.fromYear + row+1];
-                    break;
-                case 1:
-                    return [NSString stringWithFormat:@"%ld",row+1];
-                    break;
-                case 2:
-                    return [NSString stringWithFormat:@"%ld",row+1];
-                    break;
-                default:
-                    return 0;
-                    break;
-            }
-        }
-            break;
-        case LYSDatePickerModeYearAndDateAndTime:
-        {
-            switch (component) {
-                case 0:
-                    return [NSString stringWithFormat:@"%ld",self.fromYear + row+1];
-                    break;
-                case 1:
-                    return [NSString stringWithFormat:@"%ld",row+1];
-                    break;
-                case 2:
-                    return [NSString stringWithFormat:@"%ld",row+1];
-                    break;
-                case 3:
-                {
-                    if (self.hourStandard == LYSDatePickerStandard24Hour) {
-                        return [NSString stringWithFormat:@"%ld",row];
-                    }
-                    if (self.hourStandard == LYSDatePickerStandard12Hour) {
-                        if (row <= 11) {
-                            return [NSString stringWithFormat:@"%ld",row+1];
-                        } else {
-                            return [NSString stringWithFormat:@"%ld",row+1-12];
-                        }
-                    }
-                    return [NSString stringWithFormat:@"%ld",row];
-                }
-                    break;
-                case 4:
-                    return [NSString stringWithFormat:@"%ld",row];
-                    break;
-                case 5:
-                    return row == 0 ? @"AM" : @"PM";
-                    break;
-                default:
-                    return 0;
-                    break;
-            }
-        }
-            break;
-        default:
-            return 0;
-            break;
-    }
+    Match(DatePickerMode(LYSDatePickerModeTime), {
+        Match(component == 0, {
+            Match(HourStandard(LYSDatePickerStandard24Hour), {return Crossroads(row < 10, Format(@"0%ld",row), Format(@"%ld",row));})
+            Match(HourStandard(LYSDatePickerStandard12Hour), {return Crossroads(row <= 11, Format(@"%ld",row + 1), Format(@"%ld",row + 1 - 12));})
+        })
+        Match(component == 1, {return Crossroads(row < 10, Format(@"0%ld",row), Format(@"%ld",row));})
+        Match(component == 2, {return Crossroads(row == 0, @"AM", @"PM");})
+    })
+    
+    Match(DatePickerMode(LYSDatePickerModeDate), {
+        Match(component == 0, {return Format(@"%ld",row+1);})
+        Match(component == 1, {return Format(@"%ld",row+1);})
+    })
+    
+    Match(DatePickerMode(LYSDatePickerModeDateAndTime), {
+        Match(component == 0, {return Format(@"%ld",row+1);})
+        Match(component == 1, {return Format(@"%ld",row+1);})
+        Match(component == 2, {
+            Match(HourStandard(LYSDatePickerStandard24Hour), {return Crossroads(row < 10, Format(@"0%ld",row), Format(@"%ld",row));})
+            Match(HourStandard(LYSDatePickerStandard12Hour), {return Crossroads(row <= 11, Format(@"%ld",row+1), Format(@"%ld",row+1-12));})
+        })
+        Match(component == 3, {return Crossroads(row < 10, Format(@"0%ld",row), Format(@"%ld",row));})
+        Match(component == 4, {return row == 0 ? @"AM" : @"PM";})
+    })
+    
+    Match(DatePickerMode(LYSDatePickerModeYearAndDate), {
+        Match(component == 0, {return Format(@"%ld",self.fromYear + row+1);})
+        Match(component == 1, {return Format(@"%ld",row+1);})
+        Match(component == 2, {return Format(@"%ld",row+1);})
+    })
+    
+    Match(DatePickerMode(LYSDatePickerModeYearAndDateAndTime), {
+        Match(component == 0, {return Format(@"%ld",self.fromYear + row+1);})
+        Match(component == 1, {return Format(@"%ld",row+1);})
+        Match(component == 2, {return Format(@"%ld",row+1);})
+        Match(component == 3, {
+            Match(HourStandard(LYSDatePickerStandard24Hour), {return Crossroads(row < 10, Format(@"0%ld",row), Format(@"%ld",row));})
+            Match(HourStandard(LYSDatePickerStandard12Hour), {return Crossroads(row <= 11, Format(@"%ld",row+1), Format(@"%ld",row+1-12));})
+        })
+        Match(component == 4, {return Crossroads(row < 10, Format(@"0%ld",row), Format(@"%ld",row));})
+        Match(component == 5, {return row == 0 ? @"AM" : @"PM";})
+    })
+    return @"";
 }
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
 {
-    switch (self.datePickerMode) {
-        case LYSDatePickerModeTime:
-        {
-            switch (component) {
-                case 0:
-                {
-                    if (self.hourStandard == LYSDatePickerStandard12Hour) {
-                        self.currentHour = row + 1;
-                        [self judgeHourTypeWith:2];
-                    }
-                    if (self.hourStandard == LYSDatePickerStandard24Hour) {
-                        self.currentHour = row;
-                    }
-                }
-                    break;
-                case 1:
-                {
-                    self.currentMinute = row + 1;
-                }
-                    break;
-                default:
-                    break;
-            }
-        }
-            break;
-        case LYSDatePickerModeDate:
-        {
-            switch (component) {
-                case 0:
-                {
-                    self.currentMonth = row + 1;
-                    [self judgeLeapYearWith:1];
-                }
-                    break;
-                case 1:
-                {
-                    self.currentDay = row + 1;
-                }
-                    break;
-                default:
-                    break;
-            }
-        }
-            break;
-        case LYSDatePickerModeDateAndTime:
-        {
-            switch (component) {
-                case 0:
-                {
-                    self.currentMonth = row + 1;
-                    [self judgeLeapYearWith:1];
-                }
-                    break;
-                case 1:
-                {
-                    self.currentDay = row + 1;
-                }
-                    break;
-                case 2:
-                {
-                    if (self.hourStandard == LYSDatePickerStandard12Hour) {
-                        self.currentHour = row + 1;
-                        [self judgeHourTypeWith:4];
-                    }
-                    if (self.hourStandard == LYSDatePickerStandard24Hour) {
-                        self.currentHour = row;
-                    }
-                }
-                    break;
-                case 3:
-                {
-                    self.currentMinute = row + 1;
-                }
-                    break;
-                default:
-                    break;
-            }
-        }
-            break;
-        case LYSDatePickerModeYearAndDate:
-        {
-            switch (component) {
-                case 0:
-                {
-                    self.currentYear = self.fromYear + row + 1;
-                    [self judgeLeapYearWith:2];
-                }
-                    break;
-                case 1:
-                {
-                    self.currentMonth = row + 1;
-                    [self judgeLeapYearWith:2];
-                }
-                    break;
-                case 2:
-                {
-                    self.currentDay = row + 1;
-                }
-                    break;
-                default:
-                    break;
-            }
-        }
-            break;
-        case LYSDatePickerModeYearAndDateAndTime:
-        {
-            switch (component) {
-                case 0:
-                {
-                    self.currentYear = self.fromYear + row + 1;
-                    [self judgeLeapYearWith:2];
-                }
-                    break;
-                case 1:
-                {
-                    self.currentMonth = row + 1;
-                    [self judgeLeapYearWith:2];
-                }
-                    break;
-                case 2:
-                {
-                    self.currentDay = row + 1;
-                }
-                    break;
-                case 3:
-                {
-                    if (self.hourStandard == LYSDatePickerStandard12Hour) {
-                        self.currentHour = row + 1;
-                        [self judgeHourTypeWith:5];
-                    }
-                    if (self.hourStandard == LYSDatePickerStandard24Hour) {
-                        self.currentHour = row;
-                    }
-                }
-                    break;
-                case 4:
-                {
-                    self.currentMinute = row + 1;
-                }
-                    break;
-                default:
-                    break;
-            }
-        }
-            break;
-        default:
-            
-            break;
-    }
+    Match(DatePickerMode(LYSDatePickerModeTime), {
+        Match(component == 0, {
+            Match(HourStandard(LYSDatePickerStandard24Hour), {self.currentDate = setPickerDateHour(self.currentDate, row);});
+            Match(HourStandard(LYSDatePickerStandard12Hour), {
+                self.currentDate = setPickerDateHour(self.currentDate, row+1);
+                [self judgeHourTypeWith:2];
+            });
+        })
+        Match(component == 1, {self.currentDate = setPickerDateMinute(self.currentDate, row);})
+        Match(component == 2, {[self judgeHourTypeWith:2];})
+    })
+    
+    Match(DatePickerMode(LYSDatePickerModeDate), {
+        Match(component == 0, {
+            self.currentDate = setPickerDateMonth(self.currentDate, row+1);
+            [self judgeLeapYearWith:1];
+        })
+        Match(component == 1, {self.currentDate = setPickerDateDay(self.currentDate, row+1);})
+    })
+    
+    Match(DatePickerMode(LYSDatePickerModeDateAndTime), {
+        Match(component == 0, {
+            self.currentDate = setPickerDateMonth(self.currentDate, row+1);
+            [self judgeLeapYearWith:1];
+        })
+        Match(component == 1, {self.currentDate = setPickerDateDay(self.currentDate, row+1);})
+        Match(component == 2, {
+            Match(HourStandard(LYSDatePickerStandard24Hour), {self.currentDate = setPickerDateHour(self.currentDate, row);});
+            Match(HourStandard(LYSDatePickerStandard12Hour), {
+                self.currentDate = setPickerDateHour(self.currentDate, row+1);
+                [self judgeHourTypeWith:4];
+            });
+        })
+        Match(component == 3, {self.currentDate = setPickerDateMinute(self.currentDate, row);})
+        Match(component == 4, {[self judgeHourTypeWith:4];})
+    })
+    
+    Match(DatePickerMode(LYSDatePickerModeYearAndDate), {
+        Match(component == 0, {
+            self.currentDate = setPickerDateYear(self.currentDate, self.fromYear + row + 1);
+            [self judgeLeapYearWith:2];
+        })
+        Match(component == 1, {
+            self.currentDate = setPickerDateMonth(self.currentDate, row+1);
+            [self judgeLeapYearWith:2];
+        })
+        Match(component == 2, {self.currentDate = setPickerDateDay(self.currentDate, row+1);})
+    })
+    
+    Match(DatePickerMode(LYSDatePickerModeYearAndDateAndTime), {
+        Match(component == 0, {
+            self.currentDate = setPickerDateYear(self.currentDate, self.fromYear + row + 1);
+            [self judgeLeapYearWith:2];
+        })
+        Match(component == 1, {
+            self.currentDate = setPickerDateMonth(self.currentDate, row+1);
+            [self judgeLeapYearWith:2];
+        })
+        Match(component == 2, {self.currentDate = setPickerDateDay(self.currentDate, row+1);})
+        Match(component == 3, {
+            Match(HourStandard(LYSDatePickerStandard24Hour), {self.currentDate = setPickerDateHour(self.currentDate, row);});
+            Match(HourStandard(LYSDatePickerStandard12Hour), {
+                self.currentDate = setPickerDateHour(self.currentDate, row+1);
+                [self judgeHourTypeWith:5];
+            });
+        })
+        Match(component == 4, {self.currentDate = setPickerDateMinute(self.currentDate, row);})
+        Match(component == 5, {[self judgeHourTypeWith:5];})
+    })
+    
+    NSLog(@"%ld年%ld月%ld日 %ld时%ld分 %ld周 %ld",self.currentDate.year,self.currentDate.month,self.currentDate.day,self.currentDate.hour,
+          self.currentDate.minute,self.currentDate.week,self.currentDate.timeType);
 }
 
 - (void)judgeHourTypeWith:(NSInteger)index
 {
-    if (self.currentHour <= 12) {
+    if (self.currentDate.hour <= 11) {
         [self.pickerView selectRow:0 inComponent:index animated:YES];
     } else {
         [self.pickerView selectRow:1 inComponent:index animated:YES];
@@ -721,22 +515,22 @@ LYSPickerDate transformFromDate(NSDate *date)
 
 - (void)judgeLeapYearWith:(NSInteger)index
 {
-    if ([@[@1,@3,@5,@7,@8,@10,@12] containsObject:@(self.currentMonth)]) {
+    if ([@[@1,@3,@5,@7,@8,@10,@12] containsObject:@(self.currentDate.month)]) {
         self.dayNum = 31;
     }
-    if ([@[@4,@6,@9,@11] containsObject:@(self.currentMonth)]) {
+    if ([@[@4,@6,@9,@11] containsObject:@(self.currentDate.month)]) {
         self.dayNum = 30;
     }
-    if (self.currentMonth == 2) {
+    if (self.currentDate.month == 2) {
         
-        if (self.currentYear % 100 == 0) {
-            if (self.currentYear % 400 == 0) {
+        if (self.currentDate.year % 100 == 0) {
+            if (self.currentDate.year % 400 == 0) {
                 self.dayNum = 29;
             } else {
                 self.dayNum = 28;
             }
         } else {
-            if (self.currentYear % 4 == 0) {
+            if (self.currentDate.year % 4 == 0) {
                 self.dayNum = 29;
             } else {
                 self.dayNum = 28;
