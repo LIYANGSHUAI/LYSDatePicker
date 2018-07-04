@@ -25,8 +25,11 @@
     
     LYSDatePickerView *datePicker2 = [[LYSDatePickerView alloc] initWithFrame:CGRectMake(0, 270, CGRectGetWidth(self.view.frame), 250)type:(LYSDatePickerTypeCustom)];
     
-    datePicker2.datePickerMode = LYSDatePickerModeDate;
-    datePicker2.hourStandard = LYSDatePickerStandard24Hour;
+    datePicker2.datePickerMode = LYSDatePickerModeYearAndDateAndTime;
+    datePicker2.hourStandard = LYSDatePickerStandard12Hour;
+//    datePicker2.date = nil;
+//    datePicker2.AMStr = @"上午";
+//    datePicker2.PMStr = @"下午";
     
     [self.view addSubview:datePicker2];
     

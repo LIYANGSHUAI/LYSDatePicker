@@ -28,10 +28,21 @@ typedef NS_ENUM(NSUInteger, LYSDatePickerStandard) {
     LYSDatePickerStandardDefault = LYSDatePickerStandard24Hour
 };
 
+@class LYSDatePickerView;
+
+@protocol LYSDatePickerViewDelegate<NSObject>
+
+@optional
+- (void)datePicker:(LYSDatePickerView *)pickerView didSelectDate:(NSDate *)date;
+
+@end
+
 @interface LYSDatePickerView : UIView
 
 /// Whether to show the top status bar, the default is YES
 @property (nonatomic, assign) BOOL enableShowHeader;
+
+@property (nonatomic,assign) id<LYSDatePickerViewDelegate> delegate;
 
 @property (nonatomic, strong) UIView<LYSDateHeaderViewProtocol> *headerView;
 
@@ -40,11 +51,15 @@ typedef NS_ENUM(NSUInteger, LYSDatePickerStandard) {
 @property (nonatomic, assign) LYSDatePickerType type;
 @property (nonatomic, assign) LYSDatePickerMode datePickerMode;
 
-@property (nonatomic, strong) NSDate *date;
+@property (nonnull, nonatomic, strong) NSDate *date;
 @property (nonatomic, strong) NSDate *minimumDate;
 @property (nonatomic, strong) NSDate *maximumDate;
 
-@property(nonatomic, assign) LYSDatePickerStandard hourStandard;
+@property (nonatomic,assign) CGFloat rowHeight;
+
+@property (nonatomic, assign) LYSDatePickerStandard hourStandard;
+@property (nonatomic,strong) NSString *AMStr;
+@property (nonatomic,strong) NSString *PMStr;
 
 @property (nonatomic,assign) NSInteger fromYear;
 @property (nonatomic,assign) NSInteger toYear;
