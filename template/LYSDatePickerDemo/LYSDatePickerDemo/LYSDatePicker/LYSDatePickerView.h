@@ -28,6 +28,13 @@ typedef NS_ENUM(NSUInteger, LYSDatePickerStandard) {
     LYSDatePickerStandardDefault = LYSDatePickerStandard24Hour
 };
 
+typedef NS_ENUM(NSUInteger, LYSDatePickerWeekDayType) {
+    LYSDatePickerWeekDayTypeNone,
+    LYSDatePickerWeekDayTypeWeekdaySymbols,
+    LYSDatePickerWeekDayTypeShortWeekdaySymbols,
+    LYSDatePickerWeekDayTypeVeryShortWeekdaySymbols,
+};
+
 @class LYSDatePickerView;
 
 @protocol LYSDatePickerViewDelegate<NSObject>
@@ -50,6 +57,8 @@ typedef NS_ENUM(NSUInteger, LYSDatePickerStandard) {
 
 @property (nonatomic, assign) LYSDatePickerType type;
 @property (nonatomic, assign) LYSDatePickerMode datePickerMode;
+
+@property(nonatomic, assign) LYSDatePickerWeekDayType weekDayType;
 
 @property (nonnull, nonatomic, strong) NSDate *date;
 @property (nonatomic, strong) NSDate *minimumDate;
