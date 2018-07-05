@@ -302,19 +302,6 @@ NSLog(@">>>>>>>\nWARN:%@\n>>>>>>>",B);\
 #define MatchHourStandard(A,B)      {if (self.hourStandard == (LYSDatePickerStandard##A)) B}
 #define MatchWeekDayType(A,B)       {if (self.weekDayType == (LYSDatePickerWeekDayType##A)) B}
 
-@implementation LYSDateHeadrView
-
-- (instancetype)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-        self.backgroundColor = [UIColor redColor];
-    }
-    return self;
-}
-
-@end
-
 @interface LYSDatePickerView ()<UIPickerViewDelegate,UIPickerViewDataSource>
 @property (nonatomic, strong)  UIPickerView        *pickerView;
 @property (nonatomic, strong)  UIDatePicker        *datePicker;
@@ -362,7 +349,7 @@ NSLog(@">>>>>>>\nWARN:%@\n>>>>>>>",B);\
 - (UIView<LYSDateHeaderViewProtocol> *)headerView
 {
     if (!_headerView) {
-        _headerView = [[LYSDateHeadrView alloc] init];
+        _headerView = [[LYSDateHeadrView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.frame), self.headerHeight)];
     }
     return _headerView;
 }
@@ -428,12 +415,24 @@ NSLog(@">>>>>>>\nWARN:%@\n>>>>>>>",B);\
     if (self.enableShowHeader)
     {
         [self addSubview:self.headerView];
-        self.headerView.translatesAutoresizingMaskIntoConstraints = NO;
-        Layout(self.headerView,  Left,    Equal,  self,   Left,            1.0f, 0).active = YES;
-        Layout(self.headerView,  Top,     Equal,  self,   Top,             1.0f, 0).active = YES;
-        Layout(self.headerView,  Right,   Equal,  self,   Right,           1.0f, 0).active = YES;
-        Layout(self.headerView,  Height,  Equal,  nil,    NotAnAttribute,  1.0f, self.headerHeight).active = YES;
+//        self.headerView.translatesAutoresizingMaskIntoConstraints = NO;
+//        Layout(self.headerView,  Left,    Equal,  self,   Left,            1.0f, 0).active = YES;
+//        Layout(self.headerView,  Top,     Equal,  self,   Top,             1.0f, 0).active = YES;
+//        Layout(self.headerView,  Right,   Equal,  self,   Right,           1.0f, 0).active = YES;
+//        Layout(self.headerView,  Height,  Equal,  nil,    NotAnAttribute,  1.0f, self.headerHeight).active = YES;
+        
+        LYSDateHeaderBarItem *leftItem = [[LYSDateHeaderBarItem alloc] initWithTitle:@"取消" target:self action:@selector(cancelAction:)];
+        LYSDateHeaderBar *headerBar = [[LYSDateHeaderBar alloc] init];
+        headerBar.leftBarItem = leftItem;
+        
+        ((LYSDateHeadrView *)self.headerView).headerBar = headerBar;
+        
     }
+}
+
+- (void)cancelAction:(LYSDateHeaderBarItem *)sender
+{
+    NSLog(@"取消");
 }
 
 - (void)applySystemPicker
@@ -446,13 +445,16 @@ NSLog(@">>>>>>>\nWARN:%@\n>>>>>>>",B);\
     self.datePicker.maximumDate = self.maximumDate;
     self.datePicker.date = self.date;
     [self addSubview:self.datePicker];
-    self.datePicker.translatesAutoresizingMaskIntoConstraints = NO;
+//    self.datePicker.translatesAutoresizingMaskIntoConstraints = NO;
     
     CGFloat height = Crossroads(self.enableShowHeader, self.headerHeight, 0);
-    Layout(self.datePicker, Top,    Equal, self,  Top,            1.0f, height).active = YES;
-    Layout(self.datePicker, Left,   Equal, self,  Left,           1.0f, 0).active = YES;
-    Layout(self.datePicker, Right,  Equal, self,  Right,          1.0f, 0).active = YES;
-    Layout(self.datePicker, Bottom, Equal, self,  Bottom,         1.0f, 0).active = YES;
+    
+    self.datePicker.frame = CGRectMake(0, height, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame)-height);
+    
+//    Layout(self.datePicker, Top,    Equal, self,  Top,            1.0f, height).active = YES;
+//    Layout(self.datePicker, Left,   Equal, self,  Left,           1.0f, 0).active = YES;
+//    Layout(self.datePicker, Right,  Equal, self,  Right,          1.0f, 0).active = YES;
+//    Layout(self.datePicker, Bottom, Equal, self,  Bottom,         1.0f, 0).active = YES;
 }
 
 - (void)applyCustomPicker
@@ -464,6 +466,9 @@ NSLog(@">>>>>>>\nWARN:%@\n>>>>>>>",B);\
     self.pickerView.translatesAutoresizingMaskIntoConstraints = NO;
     
     CGFloat height = Crossroads(self.enableShowHeader, self.headerHeight, 0);
+    
+//    self.pickerView.frame = CGRectMake(0, height, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame)-height);
+    
     Layout(self.pickerView, Top,    Equal, self,  Top,            1.0f, height).active = YES;
     Layout(self.pickerView, Left,   Equal, self,  Left,           1.0f, 0).active = YES;
     Layout(self.pickerView, Right,  Equal, self,  Right,          1.0f, 0).active = YES;
@@ -867,6 +872,162 @@ NSLog(@">>>>>>>\nWARN:%@\n>>>>>>>",B);\
 - (CGFloat)pickerView:(UIPickerView *)pickerView rowHeightForComponent:(NSInteger)component
 {
     return self.rowHeight;
+}
+
+@end
+
+@implementation LYSDateHeaderBar
+
+@end
+
+typedef NS_ENUM(NSUInteger, LYSDateHeaderBarItemType) {
+    LYSDateHeaderBarItemTypeTitle,
+    LYSDateHeaderBarItemTypeImage,
+    LYSDateHeaderBarItemTypeCustom,
+};
+
+@interface LYSDateHeaderBarItem ()
+@property(nonatomic, copy, readwrite) NSString *title;
+@property(nonatomic, strong, readwrite) UIImage *image;
+@property(nonatomic, strong, readwrite) UIView *customView;
+@property(nonatomic, strong, readwrite) id target;
+@property(nonatomic, strong) NSInvocation *invocation;
+@property(nonatomic, assign) LYSDateHeaderBarItemType type;
+@end
+
+@implementation LYSDateHeaderBarItem
+- (instancetype)initWithTitle:(NSString *)title target:(id)target action:(SEL)action{
+    if (self = [super init]) {
+        self.type = LYSDateHeaderBarItemTypeTitle;
+        self.title = title;
+        self.target = target;
+        NSMethodSignature *signature = [self methodSignatureForSelector:@selector(action:)];
+        self.invocation = [NSInvocation invocationWithMethodSignature:signature];
+        [self.invocation setTarget:target];
+        [self.invocation setSelector:action];
+        LYSDateHeaderBarItem *barItem = self;
+        [self.invocation setArgument:&barItem atIndex:2];
+    }
+    return self;
+}
+- (instancetype)initWithImage:(UIImage *)image target:(id)target action:(SEL)action{
+    if (self = [super init]) {
+        self.type = LYSDateHeaderBarItemTypeImage;
+        self.image = image;
+        self.target = target;
+        NSMethodSignature *signature = [self methodSignatureForSelector:@selector(action:)];
+        self.invocation = [NSInvocation invocationWithMethodSignature:signature];
+        [self.invocation setTarget:target];
+        [self.invocation setSelector:action];
+        LYSDateHeaderBarItem *barItem = self;
+        [self.invocation setArgument:&barItem atIndex:2];
+    }
+    return self;
+}
+- (instancetype)initWithCustomView:(UIView *)customView
+{
+    if (self = [super init]) {
+        self.type = LYSDateHeaderBarItemTypeCustom;
+        self.customView = customView;
+    }
+    return self;
+}
+- (void)action:(UIView *)sender {}
+@end
+
+@implementation LYSDateHeadrView
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        
+    }
+    return self;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        self.backgroundColor = [UIColor redColor];
+    }
+    return self;
+}
+
+- (void)setHeaderBar:(LYSDateHeaderBar *)headerBar
+{
+    _headerBar = headerBar;
+    
+    Match(_headerBar.leftBarItem && _headerBar.leftBarItems && [_headerBar.leftBarItems count] > 0, {
+        CGFloat left = 5;
+        for (int i = 0; i < [_headerBar.leftBarItems count]; i++) {
+            UIView *itemView = [self transitionWithBarItem:_headerBar.leftBarItem];
+            itemView.frame = CGRectMake(left, 0, CGRectGetWidth(itemView.frame), CGRectGetHeight(itemView.frame));
+            [self addSubview:itemView];
+            left += 5;
+        }
+    })
+    
+    Match(_headerBar.rightBarItem && _headerBar.rightBarItems && [_headerBar.rightBarItems count] > 0, {
+        CGFloat right = 5;
+        for (int i = 0; i < [_headerBar.leftBarItems count]; i++) {
+            UIView *itemView = [self transitionWithBarItem:_headerBar.leftBarItem];
+            itemView.frame = CGRectMake(CGRectGetWidth(self.frame)-CGRectGetWidth(itemView.frame)-right, 0, CGRectGetWidth(itemView.frame), CGRectGetHeight(itemView.frame));
+            [self addSubview:itemView];
+            right += CGRectGetWidth(itemView.frame)+right;
+        }
+    })
+    
+    Match(_headerBar.leftBarItem, {
+        UIView *itemView = [self transitionWithBarItem:_headerBar.leftBarItem];
+        itemView.frame = CGRectMake(5, 0, CGRectGetWidth(itemView.frame), CGRectGetHeight(itemView.frame));
+        [self addSubview:itemView];
+    })
+    
+    Match(_headerBar.leftBarItems && [_headerBar.leftBarItems count] > 0, {
+        CGFloat left = 5;
+        for (int i = 0; i < [_headerBar.leftBarItems count]; i++) {
+            UIView *itemView = [self transitionWithBarItem:_headerBar.leftBarItem];
+            itemView.frame = CGRectMake(left, 0, CGRectGetWidth(itemView.frame), CGRectGetHeight(itemView.frame));
+            [self addSubview:itemView];
+            left += 5;
+        }
+    })
+    
+    Match(_headerBar.rightBarItem, {
+        UIView *itemView = [self transitionWithBarItem:_headerBar.leftBarItem];
+        itemView.frame = CGRectMake(CGRectGetWidth(self.frame)-CGRectGetWidth(itemView.frame)-5, 0, CGRectGetWidth(itemView.frame), CGRectGetHeight(itemView.frame));
+        [self addSubview:itemView];
+    })
+    
+    Match(_headerBar.rightBarItems && [_headerBar.rightBarItems count] > 0, {
+        CGFloat right = 5;
+        for (int i = 0; i < [_headerBar.leftBarItems count]; i++) {
+            UIView *itemView = [self transitionWithBarItem:_headerBar.leftBarItem];
+            itemView.frame = CGRectMake(CGRectGetWidth(self.frame)-CGRectGetWidth(itemView.frame)-right, 0, CGRectGetWidth(itemView.frame), CGRectGetHeight(itemView.frame));
+            [self addSubview:itemView];
+            right += CGRectGetWidth(itemView.frame)+right;
+        }
+    })
+    
+}
+
+- (UIView *)transitionWithBarItem:(LYSDateHeaderBarItem *)item
+{
+    UIView *contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 40, CGRectGetHeight(self.frame))];
+    Match(item.type == LYSDateHeaderBarItemTypeTitle, {
+        UILabel *label = [[UILabel alloc] init];
+        label.text = item.title;
+        label.textColor = item.tintColor;
+        label.font = item.font;
+        [label sizeToFit];
+        contentView.frame = CGRectMake(0, 0, CGRectGetWidth(label.frame)+5, CGRectGetHeight(self.frame));
+        NSLog(@"%@",contentView);
+        label.frame = CGRectMake(2.5, (CGRectGetHeight(self.frame) - CGRectGetHeight(label.frame))/2.0, CGRectGetWidth(label.frame), CGRectGetHeight(label.frame));
+        [contentView addSubview:label];
+    })
+    return contentView;
 }
 
 @end

@@ -39,16 +39,13 @@ typedef NS_ENUM(NSUInteger, LYSDatePickerWeekDayType) {
 @end
 
 @class LYSDatePickerView;
+@class LYSDateHeaderBarItem,LYSDateHeaderBar;
 
 @protocol LYSDatePickerViewDelegate<NSObject>
 
 @optional
 - (void)datePicker:(LYSDatePickerView *)pickerView didSelectDate:(NSDate *)date;
 - (CGFloat)datePicker:(LYSDatePickerView *)pickerView componentWidthOfIndex:(NSInteger)index;
-
-@end
-
-@interface LYSDateHeadrView : UIView<LYSDateHeaderViewProtocol>
 
 @end
 
@@ -77,8 +74,8 @@ typedef NS_ENUM(NSUInteger, LYSDatePickerWeekDayType) {
 @property (nonatomic,assign) CGFloat rowHeight;
 
 @property (nonatomic, assign) LYSDatePickerStandard hourStandard;
-@property (nonatomic,strong) NSString *AMStr;
-@property (nonatomic,strong) NSString *PMStr;
+@property (nonnull, nonatomic, strong) NSString *AMStr;
+@property (nonnull, nonatomic, strong) NSString *PMStr;
 
 @property (nonatomic,assign) NSInteger fromYear;
 @property (nonatomic,assign) NSInteger toYear;
@@ -87,4 +84,34 @@ typedef NS_ENUM(NSUInteger, LYSDatePickerWeekDayType) {
 @property (nonatomic,strong) UIColor *labelColor;
 
 - (instancetype)initWithFrame:(CGRect)frame type:(LYSDatePickerType)type;
+@end
+
+@interface LYSDateHeadrView : UIView<LYSDateHeaderViewProtocol>
+@property(nonatomic, strong) LYSDateHeaderBar *headerBar;
+@end
+
+@interface LYSDateHeaderBar : NSObject
+@property(nonatomic, strong) LYSDateHeaderBarItem *leftBarItem;
+@property(nonatomic, strong) LYSDateHeaderBarItem *rightBarItem;
+
+@property(nonatomic, strong) NSArray<LYSDateHeaderBarItem *> *leftBarItems;
+@property(nonatomic, strong) NSArray<LYSDateHeaderBarItem *> *rightBarItems;
+
+@property(nonatomic, copy) NSString *title;
+@property(nonatomic, strong) UIView *titleView;
+@end
+
+@interface LYSDateHeaderBarItem : NSObject
+
+@property(nonatomic, copy, readonly) NSString *title;
+@property(nonatomic, strong, readonly) UIImage *image;
+@property(nonatomic, strong, readonly) UIView *customView;
+@property(nonatomic, strong, readonly) id target;
+
+@property(nonatomic, strong) UIColor *tintColor;
+@property(nonatomic, strong) UIFont *font;
+
+- (instancetype)initWithTitle:(NSString *)title target:(id)target action:(SEL)action;
+- (instancetype)initWithImage:(UIImage *)image target:(id)target action:(SEL)action;
+- (instancetype)initWithCustomView:(UIView *)customView;
 @end
