@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "LYSDateHeaderViewProtocol.h"
 
 typedef NS_ENUM(NSUInteger, LYSDatePickerType) {
     LYSDatePickerTypeCustom,            // Date component is selected UIPickerView
@@ -35,12 +34,21 @@ typedef NS_ENUM(NSUInteger, LYSDatePickerWeekDayType) {
     LYSDatePickerWeekDayTypeVeryShortWeekdaySymbols,
 };
 
+@protocol LYSDateHeaderViewProtocol <NSObject>
+
+@end
+
 @class LYSDatePickerView;
 
 @protocol LYSDatePickerViewDelegate<NSObject>
 
 @optional
 - (void)datePicker:(LYSDatePickerView *)pickerView didSelectDate:(NSDate *)date;
+- (CGFloat)datePicker:(LYSDatePickerView *)pickerView componentWidthOfIndex:(NSInteger)index;
+
+@end
+
+@interface LYSDateHeadrView : UIView<LYSDateHeaderViewProtocol>
 
 @end
 
@@ -60,6 +68,8 @@ typedef NS_ENUM(NSUInteger, LYSDatePickerWeekDayType) {
 
 @property(nonatomic, assign) LYSDatePickerWeekDayType weekDayType;
 
+@property (nonatomic,assign) BOOL allowShowUnit;
+
 @property (nonnull, nonatomic, strong) NSDate *date;
 @property (nonatomic, strong) NSDate *minimumDate;
 @property (nonatomic, strong) NSDate *maximumDate;
@@ -72,6 +82,9 @@ typedef NS_ENUM(NSUInteger, LYSDatePickerWeekDayType) {
 
 @property (nonatomic,assign) NSInteger fromYear;
 @property (nonatomic,assign) NSInteger toYear;
+
+@property (nonatomic,strong) UIFont *labelFont;
+@property (nonatomic,strong) UIColor *labelColor;
 
 - (instancetype)initWithFrame:(CGRect)frame type:(LYSDatePickerType)type;
 @end

@@ -16,7 +16,6 @@
 		3E7B440A20E8A78F00C374CA /* LYSDatePickerDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E7B440920E8A78F00C374CA /* LYSDatePickerDemoTests.m */; };
 		3E7B441520E8A78F00C374CA /* LYSDatePickerDemoUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E7B441420E8A78F00C374CA /* LYSDatePickerDemoUITests.m */; };
 		3E7B442820E8D05B00C374CA /* LYSDatePickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E7B442720E8D05B00C374CA /* LYSDatePickerView.m */; };
-		3E7B442C20E8D0BE00C374CA /* LYSDateHeadrView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E7B442B20E8D0BE00C374CA /* LYSDateHeadrView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,9 +54,6 @@
 		3E7B441620E8A78F00C374CA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3E7B442620E8D05B00C374CA /* LYSDatePickerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LYSDatePickerView.h; sourceTree = "<group>"; };
 		3E7B442720E8D05B00C374CA /* LYSDatePickerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LYSDatePickerView.m; sourceTree = "<group>"; };
-		3E7B442A20E8D0BE00C374CA /* LYSDateHeadrView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LYSDateHeadrView.h; sourceTree = "<group>"; };
-		3E7B442B20E8D0BE00C374CA /* LYSDateHeadrView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LYSDateHeadrView.m; sourceTree = "<group>"; };
-		3E7B442D20E8D19700C374CA /* LYSDateHeaderViewProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LYSDateHeaderViewProtocol.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,29 +139,10 @@
 		3E7B442220E8CBB000C374CA /* LYSDatePicker */ = {
 			isa = PBXGroup;
 			children = (
-				3E7B442E20E8D1A400C374CA /* Protocol */,
-				3E7B442920E8D0A700C374CA /* HeaderView */,
 				3E7B442620E8D05B00C374CA /* LYSDatePickerView.h */,
 				3E7B442720E8D05B00C374CA /* LYSDatePickerView.m */,
 			);
 			path = LYSDatePicker;
-			sourceTree = "<group>";
-		};
-		3E7B442920E8D0A700C374CA /* HeaderView */ = {
-			isa = PBXGroup;
-			children = (
-				3E7B442A20E8D0BE00C374CA /* LYSDateHeadrView.h */,
-				3E7B442B20E8D0BE00C374CA /* LYSDateHeadrView.m */,
-			);
-			path = HeaderView;
-			sourceTree = "<group>";
-		};
-		3E7B442E20E8D1A400C374CA /* Protocol */ = {
-			isa = PBXGroup;
-			children = (
-				3E7B442D20E8D19700C374CA /* LYSDateHeaderViewProtocol.h */,
-			);
-			path = Protocol;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -298,7 +275,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3E7B442C20E8D0BE00C374CA /* LYSDateHeadrView.m in Sources */,
 				3E7B43F520E8A78F00C374CA /* ViewController.m in Sources */,
 				3E7B440020E8A78F00C374CA /* main.m in Sources */,
 				3E7B442820E8D05B00C374CA /* LYSDatePickerView.m in Sources */,

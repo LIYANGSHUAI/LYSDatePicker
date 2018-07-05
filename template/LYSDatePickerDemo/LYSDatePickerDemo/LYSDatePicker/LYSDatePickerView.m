@@ -7,7 +7,6 @@
 //
 
 #import "LYSDatePickerView.h"
-#import "LYSDateHeadrView.h"
 
 typedef NS_ENUM(NSInteger, LYSLayoutAttr) {
     Left                    = NSLayoutAttributeLeft,                        // left
@@ -86,7 +85,7 @@ LYSPickerDate transformFromDate(NSDate *date)
 
 /**
  Convert an LYSPickerDate object to a NSDate type
-
+ 
  @param date NSDate
  @return LYSPickerDate
  */
@@ -104,7 +103,7 @@ NSDate * transformFromComponents(LYSPickerDate date)
 
 /**
  get weakDay of LYSPickerDate
-
+ 
  @param date LYSPickerDate
  @return weakDay
  */
@@ -117,10 +116,10 @@ NSInteger weekDayOfFirstDate(LYSPickerDate date)
     [components setDay:1];
     NSDate *firstDate = [[NSCalendar currentCalendar] dateFromComponents:components];
     NSInteger index = [[NSCalendar currentCalendar] component:(NSCalendarUnitWeekday) fromDate:firstDate];
-//    index = index - 1;
-//    if (index == 0) {
-//        index = 7;
-//    }
+    //    index = index - 1;
+    //    if (index == 0) {
+    //        index = 7;
+    //    }
     return index;
 }
 
@@ -303,6 +302,19 @@ NSLog(@">>>>>>>\nWARN:%@\n>>>>>>>",B);\
 #define MatchHourStandard(A,B)      {if (self.hourStandard == (LYSDatePickerStandard##A)) B}
 #define MatchWeekDayType(A,B)       {if (self.weekDayType == (LYSDatePickerWeekDayType##A)) B}
 
+@implementation LYSDateHeadrView
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        self.backgroundColor = [UIColor redColor];
+    }
+    return self;
+}
+
+@end
+
 @interface LYSDatePickerView ()<UIPickerViewDelegate,UIPickerViewDataSource>
 @property (nonatomic, strong)  UIPickerView        *pickerView;
 @property (nonatomic, strong)  UIDatePicker        *datePicker;
@@ -374,17 +386,31 @@ NSLog(@">>>>>>>\nWARN:%@\n>>>>>>>",B);\
     self.fromYear = 1900;
     self.toYear = 2100;
     self.date = [NSDate date];
+    self.minimumDate = [NSDate dateWithTimeIntervalSinceNow:-3600*24*31*12];
+    self.maximumDate = [NSDate dateWithTimeIntervalSinceNow:3600*24*31*12];
     self.dayNum = 31;
     self.hourStandard = LYSDatePickerStandardDefault;
     self.AMStr = @"AM";
     self.PMStr = @"PM";
     self.rowHeight = 40;
-    
+    self.allowShowUnit = YES;
     self.weekDayType = LYSDatePickerWeekDayTypeNone;
+    self.labelFont = [UIFont systemFontOfSize:16];
+    self.labelColor = [UIColor blackColor];
+
+}
+
+- (NSArray *)weekDayStrArr
+{
+    NSArray *weekDayStrArr = @[@"星期日",@"星期一",@"星期二",@"星期三",@"星期四",@"星期五",@"星期六"];
+    NSArray *shortWeekdaySymbols = @[@"周日",@"周一",@"周二",@"周三",@"周四",@"周五",@"周六"];
+    NSArray *veryShortWeekdaySymbols = @[@"日",@"一",@"二",@"三",@"四",@"五",@"六"];
     
-    MatchWeekDayType(WeekdaySymbols, self.weekDayStrArr = [[NSCalendar currentCalendar] weekdaySymbols];)
-    MatchWeekDayType(ShortWeekdaySymbols, self.weekDayStrArr = [[NSCalendar currentCalendar] shortWeekdaySymbols];)
-    MatchWeekDayType(VeryShortWeekdaySymbols, self.weekDayStrArr = [[NSCalendar currentCalendar] veryShortWeekdaySymbols];)
+    MatchWeekDayType(WeekdaySymbols,                {_weekDayStrArr = nil;})
+    MatchWeekDayType(WeekdaySymbols,                {_weekDayStrArr = weekDayStrArr;})
+    MatchWeekDayType(ShortWeekdaySymbols,           {_weekDayStrArr = shortWeekdaySymbols;})
+    MatchWeekDayType(VeryShortWeekdaySymbols,       {_weekDayStrArr = veryShortWeekdaySymbols;})
+    return _weekDayStrArr;
 }
 
 #pragma mark - Add a subview -
@@ -443,11 +469,11 @@ NSLog(@">>>>>>>\nWARN:%@\n>>>>>>>",B);\
     Layout(self.pickerView, Right,  Equal, self,  Right,          1.0f, 0).active = YES;
     Layout(self.pickerView, Bottom, Equal, self,  Bottom,         1.0f, 0).active = YES;
     
-    [self initTitle];
+//    [self initTitle];
     
     self.currentDate = transformFromDate(self.date);
     
-    [self initCurrentDate];
+    [self selectDate:self.currentDate];
 }
 
 - (void)initTitle
@@ -478,14 +504,14 @@ NSLog(@">>>>>>>\nWARN:%@\n>>>>>>>",B);\
     Layout(label1, Left, Equal, self, Left, 1.0f, space + 90 - 5).active = YES;
 }
 
-- (void)initCurrentDate
+- (void)selectDate:(LYSPickerDate)date
 {
-    NSInteger yearIndex                         = self.currentDate.year-self.fromYear-1;
-    NSInteger monthIndex                        = self.currentDate.month-1;
-    NSInteger dayIndex                          = self.currentDate.day-1;
-    NSInteger hourIndex_12                      = Crossroads(self.currentDate.hour == 0, 23, (self.currentDate.hour-1));
-    NSInteger hourIndex_24                      = self.currentDate.hour;
-    NSInteger minuteIndex                       = self.currentDate.minute;
+    NSInteger yearIndex                         = date.year-self.fromYear-1;
+    NSInteger monthIndex                        = date.month-1;
+    NSInteger dayIndex                          = date.day-1;
+    NSInteger hourIndex_12                      = Crossroads(date.hour == 0, 23, (date.hour-1));
+    NSInteger hourIndex_24                      = date.hour;
+    NSInteger minuteIndex                       = date.minute;
     
     MatchDatePickerMode(Time, {
         NSInteger hourValue = 0;
@@ -591,27 +617,39 @@ NSLog(@">>>>>>>\nWARN:%@\n>>>>>>>",B);\
         label = [[UILabel alloc] init];
         label.textAlignment = NSTextAlignmentCenter;
     }
-//    label.backgroundColor = [UIColor redColor];
-    label.font = [UIFont systemFontOfSize:14];
+    label.textColor = self.labelColor;
+    label.font = self.labelFont;
     label.text = [self pickerView:pickerView titleForRow:row forComponent:component];
     return label;
 }
 
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
 {
-    NSString *weekDay = @"";
-    Match(self.weekDayType != LYSDatePickerWeekDayTypeNone, {
-        NSInteger tempWeekDay                       = (self.weekDayOfFirstDate+row)%7;
-        NSInteger tempWeekIndex                     = Crossroads(tempWeekDay == 0, 7, tempWeekDay);
-        weekDay                           = Format(@"%@",[self.weekDayStrArr objectAtIndex:tempWeekIndex-1]);
-    })
-    NSString *yearValue                         = Format(@"%ld",(long)(self.fromYear + row+1));;
-    NSString *monthValue                        = Format(@"%ld",(long)(row+1));;
-    NSString *dayValue                          = Format(@"%ld %@",(long)(row+1), weekDay);;
+    
+    NSString *yearValue                         = Format(@"%ld",(long)(self.fromYear + row+1));
+    NSString *monthValue                        = Format(@"%ld",(long)(row+1));
+    NSString *dayValue                          = Format(@"%ld",(long)(row+1));
     NSString *hourValue_12                      = Crossroads(row <= 11, Format(@"%ld",(long)(row+1)), Format(@"%ld",(long)(row-11)));
     NSString *hourValue_24                      = Crossroads(row < 10, Format(@"0%ld",(long)row), Format(@"%ld",(long)row));
     NSString *minuteValue                       = Crossroads(row < 10, Format(@"0%ld",(long)row), Format(@"%ld",(long)row));
     NSString *timeTypeValue                     = Crossroads(row == 0, self.AMStr, self.PMStr);
+    
+    Match(self.allowShowUnit, {
+        yearValue                         = Format(@"%@年",yearValue);;
+        monthValue                        = Format(@"%@月",monthValue);
+        dayValue                          = Format(@"%@日",dayValue);
+        hourValue_12                      = Format(@"%@时",hourValue_12);
+        hourValue_24                      = Format(@"%@时",hourValue_24);
+        minuteValue                       = Format(@"%@分",minuteValue);
+        timeTypeValue                     = Format(@"%@",timeTypeValue);
+    })
+
+    Match(self.weekDayType != LYSDatePickerWeekDayTypeNone, {
+        NSInteger tempWeekDay                   = (self.weekDayOfFirstDate+row)%7;
+        NSInteger tempWeekIndex                 = Crossroads(tempWeekDay == 0, 7, tempWeekDay);
+        NSString  *weekDay                      = Format(@"%@",[self.weekDayStrArr objectAtIndex:tempWeekIndex-1]);
+        dayValue                                = Format(@"%@ %@",dayValue, weekDay);
+    })
     
     MatchDatePickerMode(Time, {
         Match(component == 0,
@@ -718,16 +756,35 @@ NSLog(@">>>>>>>\nWARN:%@\n>>>>>>>",B);\
     
     [self monitorCurrentDate];
     
+    NSDate *date = transformFromComponents(self.currentDate);
+    
+    [self compareDate:date];
     
     if (self.delegate && [self.delegate respondsToSelector:@selector(datePicker:didSelectDate:)]) {
-        
+        [self.delegate datePicker:self didSelectDate:date];
     }
-    
-    transformFromComponents(self.currentDate);
-    
-//    NSLog(@"%ld年%ld月%ld日 %ld时%ld分 %ld周 %ld",self.currentDate.year,self.currentDate.month,self.currentDate.day,self.currentDate.hour,
-//          self.currentDate.minute,self.currentDate.week,self.currentDate.timeType);
 }
+
+- (void)compareDate:(NSDate *)date
+{
+    Match(self.minimumDate, {
+        NSComparisonResult miniResult = [[NSCalendar currentCalendar] compareDate:self.minimumDate toDate:date toUnitGranularity:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute];
+        
+        if (miniResult == NSOrderedDescending) {
+            
+            self.currentDate = transformFromDate(self.minimumDate);
+            [self selectDate:self.currentDate];
+        }
+    })
+    Match(self.maximumDate, {
+        NSComparisonResult maxResult = [[NSCalendar currentCalendar] compareDate:self.maximumDate toDate:date toUnitGranularity:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute];
+        if (maxResult == NSOrderedAscending) {
+            self.currentDate = transformFromDate(self.maximumDate);
+            [self selectDate:self.currentDate];
+        }
+    })
+}
+
 
 - (void)monitorCurrentDate
 {
@@ -768,6 +825,42 @@ NSLog(@">>>>>>>\nWARN:%@\n>>>>>>>",B);\
 
 - (CGFloat)pickerView:(UIPickerView *)pickerView widthForComponent:(NSInteger)component
 {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(datePicker:componentWidthOfIndex:)]) {
+        return [self.delegate datePicker:self componentWidthOfIndex:component];
+    }
+    
+    CGFloat fontSize = self.labelFont.pointSize;
+    
+    MatchDatePickerMode(Time,                   {
+        Match(component == 0, {return 100;})
+        Match(component == 1, {return 100;})
+        Match(component == 2, {return 100;})
+    })
+    MatchDatePickerMode(Date,                   {
+        Match(component == 0, {return 100;})
+        Match(component == 1, {return 100;})
+    })
+    MatchDatePickerMode(DateAndTime,            {
+        Match(component == 0, {return 100;})
+        Match(component == 1, {return 100;})
+        Match(component == 2, {return 100;})
+        Match(component == 3, {return 100;})
+        Match(component == 4, {return 100;})
+    })
+    MatchDatePickerMode(YearAndDate,            {
+        Match(component == 0, {return 100;})
+        Match(component == 1, {return 100;})
+        Match(component == 2, {return 100;})
+    })
+    MatchDatePickerMode(YearAndDateAndTime,     {
+        Match(component == 0, {return 50*fontSize/14.0;})
+        Match(component == 1, {return 35*fontSize/14.0;})
+        Match(component == 2, {return 80*fontSize/14.0;})
+        Match(component == 3, {return 40*fontSize/14.0;})
+        Match(component == 4, {return 40*fontSize/14.0;})
+        Match(component == 5, {return 30*fontSize/14.0;})
+    })
+    
     return 45;
 }
 
