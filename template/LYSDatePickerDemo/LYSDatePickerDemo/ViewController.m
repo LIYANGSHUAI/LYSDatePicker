@@ -8,8 +8,8 @@
 
 #import "ViewController.h"
 #import "LYSDatePickerView.h"
-
-@interface ViewController ()
+@interface ViewController ()<UITableViewDelegate,UITableViewDataSource,LYSDatePickerViewDataSource>
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 @end
 
@@ -18,23 +18,34 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    
-    LYSDatePickerView *datePicker1 = [[LYSDatePickerView alloc] initWithFrame:CGRectMake(0, 20, CGRectGetWidth(self.view.frame), 250) type:(LYSDatePickerTypeSystem)];
+    self.title = @"日期选择器";
+    self.tableView.tableFooterView = [UIView new];
+    [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"UITableViewCell"];
+}
 
-    [self.view addSubview:datePicker1];
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return 10;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+   UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:(UITableViewCellStyleValue1) reuseIdentifier:@"UITableViewCell"];
+    LYSDatePickerView *pickerView = [[LYSDatePickerView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.frame), 256) type:(LYSDatePickerTypeSystem)];
+    pickerView.dataSource = self;
     
-    LYSDatePickerView *datePicker2 = [[LYSDatePickerView alloc] initWithFrame:CGRectMake(0, 270, CGRectGetWidth(self.view.frame), 250)type:(LYSDatePickerTypeCustom)];
-    
-    datePicker2.datePickerMode = LYSDatePickerModeYearAndDateAndTime;
-    datePicker2.hourStandard = LYSDatePickerStandard24Hour;
-    datePicker2.weekDayType = LYSDatePickerWeekDayTypeWeekdaySymbols;
-    datePicker2.allowShowUnit = YES;
-//    datePicker2.date = nil;
-//    datePicker2.AMStr = @"上午";
-//    datePicker2.PMStr = @"下午";
-    
-    [self.view addSubview:datePicker2];
-    
+    [cell.contentView addSubview:pickerView];
+    return cell;
+}
+
+- (void)datePicker:(LYSDatePickerView *)pickerView didSelectDate:(NSDate *)date
+{
+    NSLog(@"%@",date);
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 256;
 }
 
 - (void)didReceiveMemoryWarning {

@@ -7,6 +7,7 @@
 //
 
 #import "LYSDatePickerView.h"
+#import <objc/runtime.h>
 
 typedef NS_ENUM(NSInteger, LYSLayoutAttr) {
     Left                    = NSLayoutAttributeLeft,                        // left
@@ -302,6 +303,9 @@ NSLog(@">>>>>>>\nWARN:%@\n>>>>>>>",B);\
 #define MatchHourStandard(A,B)      {if (self.hourStandard == (LYSDatePickerStandard##A)) B}
 #define MatchWeekDayType(A,B)       {if (self.weekDayType == (LYSDatePickerWeekDayType##A)) B}
 
+
+NSString *const LYSDatePickerDidSelectDateNotifition = @"LYSDatePickerDidSelectDateNotifition";
+
 @interface LYSDatePickerView ()<UIPickerViewDelegate,UIPickerViewDataSource>
 @property (nonatomic, strong)  UIPickerView        *pickerView;
 @property (nonatomic, strong)  UIDatePicker        *datePicker;
@@ -346,10 +350,10 @@ NSLog(@">>>>>>>\nWARN:%@\n>>>>>>>",B);\
 /*
  In the case that enableShowHeader is YES, if the user does not set the headerView, but the headerHeight is not 0, this time, by default, a default top status bar LYSDateHeadrView is created.
  */
-- (UIView<LYSDateHeaderViewProtocol> *)headerView
+- (LYSDateHeadrView *)headerView
 {
     if (!_headerView) {
-        _headerView = [[LYSDateHeadrView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.frame), self.headerHeight)];
+        _headerView = [[LYSDateHeadrView alloc] init];
     }
     return _headerView;
 }
@@ -384,7 +388,6 @@ NSLog(@">>>>>>>\nWARN:%@\n>>>>>>>",B);\
     self.weekDayType = LYSDatePickerWeekDayTypeNone;
     self.labelFont = [UIFont systemFontOfSize:16];
     self.labelColor = [UIColor blackColor];
-
 }
 
 - (NSArray *)weekDayStrArr
@@ -415,24 +418,14 @@ NSLog(@">>>>>>>\nWARN:%@\n>>>>>>>",B);\
     if (self.enableShowHeader)
     {
         [self addSubview:self.headerView];
-//        self.headerView.translatesAutoresizingMaskIntoConstraints = NO;
-//        Layout(self.headerView,  Left,    Equal,  self,   Left,            1.0f, 0).active = YES;
-//        Layout(self.headerView,  Top,     Equal,  self,   Top,             1.0f, 0).active = YES;
-//        Layout(self.headerView,  Right,   Equal,  self,   Right,           1.0f, 0).active = YES;
-//        Layout(self.headerView,  Height,  Equal,  nil,    NotAnAttribute,  1.0f, self.headerHeight).active = YES;
+        self.headerView.translatesAutoresizingMaskIntoConstraints = NO;
+        Layout(self.headerView,  Left,    Equal,  self,   Left,            1.0f, 0).active = YES;
+        Layout(self.headerView,  Top,     Equal,  self,   Top,             1.0f, 0).active = YES;
+        Layout(self.headerView,  Right,   Equal,  self,   Right,           1.0f, 0).active = YES;
+        Layout(self.headerView,  Height,  Equal,  nil,    NotAnAttribute,  1.0f, self.headerHeight).active = YES;
         
-        LYSDateHeaderBarItem *leftItem = [[LYSDateHeaderBarItem alloc] initWithTitle:@"取消" target:self action:@selector(cancelAction:)];
-        LYSDateHeaderBar *headerBar = [[LYSDateHeaderBar alloc] init];
-        headerBar.leftBarItem = leftItem;
-        
-        ((LYSDateHeadrView *)self.headerView).headerBar = headerBar;
-        
+        [self layoutIfNeeded];
     }
-}
-
-- (void)cancelAction:(LYSDateHeaderBarItem *)sender
-{
-    NSLog(@"取消");
 }
 
 - (void)applySystemPicker
@@ -445,16 +438,25 @@ NSLog(@">>>>>>>\nWARN:%@\n>>>>>>>",B);\
     self.datePicker.maximumDate = self.maximumDate;
     self.datePicker.date = self.date;
     [self addSubview:self.datePicker];
-//    self.datePicker.translatesAutoresizingMaskIntoConstraints = NO;
+    self.datePicker.translatesAutoresizingMaskIntoConstraints = NO;
     
     CGFloat height = Crossroads(self.enableShowHeader, self.headerHeight, 0);
     
-    self.datePicker.frame = CGRectMake(0, height, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame)-height);
-    
-//    Layout(self.datePicker, Top,    Equal, self,  Top,            1.0f, height).active = YES;
-//    Layout(self.datePicker, Left,   Equal, self,  Left,           1.0f, 0).active = YES;
-//    Layout(self.datePicker, Right,  Equal, self,  Right,          1.0f, 0).active = YES;
-//    Layout(self.datePicker, Bottom, Equal, self,  Bottom,         1.0f, 0).active = YES;
+    Layout(self.datePicker, Top,    Equal, self,  Top,            1.0f, height).active = YES;
+    Layout(self.datePicker, Left,   Equal, self,  Left,           1.0f, 0).active = YES;
+    Layout(self.datePicker, Right,  Equal, self,  Right,          1.0f, 0).active = YES;
+    Layout(self.datePicker, Bottom, Equal, self,  Bottom,         1.0f, 0).active = YES;
+    [self layoutIfNeeded];
+
+    [self.datePicker addTarget:self action:@selector(changeDate:) forControlEvents:(UIControlEventValueChanged)];
+}
+
+- (void)changeDate:(UIDatePicker *)sender
+{
+    if (self.dataSource && [self.dataSource respondsToSelector:@selector(datePicker:didSelectDate:)]) {
+        [self.dataSource datePicker:self didSelectDate:sender.date];
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:LYSDatePickerDidSelectDateNotifition object:nil userInfo:@{@"value":sender.date}];
 }
 
 - (void)applyCustomPicker
@@ -467,46 +469,26 @@ NSLog(@">>>>>>>\nWARN:%@\n>>>>>>>",B);\
     
     CGFloat height = Crossroads(self.enableShowHeader, self.headerHeight, 0);
     
-//    self.pickerView.frame = CGRectMake(0, height, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame)-height);
-    
     Layout(self.pickerView, Top,    Equal, self,  Top,            1.0f, height).active = YES;
     Layout(self.pickerView, Left,   Equal, self,  Left,           1.0f, 0).active = YES;
     Layout(self.pickerView, Right,  Equal, self,  Right,          1.0f, 0).active = YES;
     Layout(self.pickerView, Bottom, Equal, self,  Bottom,         1.0f, 0).active = YES;
-    
-//    [self initTitle];
+    [self layoutIfNeeded];
     
     self.currentDate = transformFromDate(self.date);
     
     [self selectDate:self.currentDate];
 }
 
-- (void)initTitle
+- (void)updateDate:(NSDate *)date
 {
-    CGFloat space = 0;
-    MatchDatePickerMode(Time,                   {space = (CGRectGetWidth(self.frame) - 2 * 45 - 5) / 2;})
-    MatchDatePickerMode(Date,                   {space = (CGRectGetWidth(self.frame) - 2 * 45 - 5) / 2;})
-    MatchDatePickerMode(DateAndTime,            {space = (CGRectGetWidth(self.frame) - 2 * 45 - 5) / 2;})
-    MatchDatePickerMode(YearAndDate,            {space = (CGRectGetWidth(self.frame) - 2 * 45 - 5) / 2;})
-    MatchDatePickerMode(YearAndDateAndTime,     {space = (CGRectGetWidth(self.frame) - 6 * 45 - 25) / 2;})
-    
-    UILabel  *label = [[UILabel alloc] init];
-    label.text = @"年";
-    [self addSubview:label];
-    label.translatesAutoresizingMaskIntoConstraints = NO;
-    Layout(label, CenterY, Equal, self.pickerView, CenterY, 1.0f, 0).active = YES;
-    Layout(label, Width, Equal, nil, NotAnAttribute, 1.0f, 100).active = YES;
-    Layout(label, Height, Equal, nil, NotAnAttribute, 1.0f, 20).active = YES;
-    Layout(label, Left, Equal, self, Left, 1.0f, space + 45 - 2).active = YES;
-    
-    UILabel  *label1 = [[UILabel alloc] init];
-    label1.text = @"月";
-    [self addSubview:label1];
-    label1.translatesAutoresizingMaskIntoConstraints = NO;
-    Layout(label1, CenterY, Equal, self.pickerView, CenterY, 1.0f, 0).active = YES;
-    Layout(label1, Width, Equal, nil, NotAnAttribute, 1.0f, 100).active = YES;
-    Layout(label1, Height, Equal, nil, NotAnAttribute, 1.0f, 20).active = YES;
-    Layout(label1, Left, Equal, self, Left, 1.0f, space + 90 - 5).active = YES;
+    MatchType(System, {
+        self.datePicker.date = date;
+    })
+    MatchType(Custom, {
+        self.currentDate = transformFromDate(self.date);
+        [self selectDate:self.currentDate];
+    })
 }
 
 - (void)selectDate:(LYSPickerDate)date
@@ -630,7 +612,6 @@ NSLog(@">>>>>>>\nWARN:%@\n>>>>>>>",B);\
 
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
 {
-    
     NSString *yearValue                         = Format(@"%ld",(long)(self.fromYear + row+1));
     NSString *monthValue                        = Format(@"%ld",(long)(row+1));
     NSString *dayValue                          = Format(@"%ld",(long)(row+1));
@@ -640,15 +621,15 @@ NSLog(@">>>>>>>\nWARN:%@\n>>>>>>>",B);\
     NSString *timeTypeValue                     = Crossroads(row == 0, self.AMStr, self.PMStr);
     
     Match(self.allowShowUnit, {
-        yearValue                         = Format(@"%@年",yearValue);;
-        monthValue                        = Format(@"%@月",monthValue);
-        dayValue                          = Format(@"%@日",dayValue);
-        hourValue_12                      = Format(@"%@时",hourValue_12);
-        hourValue_24                      = Format(@"%@时",hourValue_24);
-        minuteValue                       = Format(@"%@分",minuteValue);
-        timeTypeValue                     = Format(@"%@",timeTypeValue);
+        yearValue                               = Format(@"%@年",yearValue);;
+        monthValue                              = Format(@"%@月",monthValue);
+        dayValue                                = Format(@"%@日",dayValue);
+        hourValue_12                            = Format(@"%@时",hourValue_12);
+        hourValue_24                            = Format(@"%@时",hourValue_24);
+        minuteValue                             = Format(@"%@分",minuteValue);
+        timeTypeValue                           = Format(@"%@",timeTypeValue);
     })
-
+    
     Match(self.weekDayType != LYSDatePickerWeekDayTypeNone, {
         NSInteger tempWeekDay                   = (self.weekDayOfFirstDate+row)%7;
         NSInteger tempWeekIndex                 = Crossroads(tempWeekDay == 0, 7, tempWeekDay);
@@ -765,9 +746,10 @@ NSLog(@">>>>>>>\nWARN:%@\n>>>>>>>",B);\
     
     [self compareDate:date];
     
-    if (self.delegate && [self.delegate respondsToSelector:@selector(datePicker:didSelectDate:)]) {
-        [self.delegate datePicker:self didSelectDate:date];
+    if (self.dataSource && [self.dataSource respondsToSelector:@selector(datePicker:didSelectDate:)]) {
+        [self.dataSource datePicker:self didSelectDate:date];
     }
+    [[NSNotificationCenter defaultCenter] postNotificationName:LYSDatePickerDidSelectDateNotifition object:nil userInfo:@{@"value":date}];
 }
 
 - (void)compareDate:(NSDate *)date
@@ -789,7 +771,6 @@ NSLog(@">>>>>>>\nWARN:%@\n>>>>>>>",B);\
         }
     })
 }
-
 
 - (void)monitorCurrentDate
 {
@@ -837,33 +818,33 @@ NSLog(@">>>>>>>\nWARN:%@\n>>>>>>>",B);\
     CGFloat fontSize = self.labelFont.pointSize;
     
     MatchDatePickerMode(Time,                   {
-        Match(component == 0, {return 100;})
-        Match(component == 1, {return 100;})
-        Match(component == 2, {return 100;})
+        Match(component == 0,                               {return 40*fontSize/14.0;})
+        Match(component == 1,                               {return 40*fontSize/14.0;})
+        Match(component == 2,                               {return 30*fontSize/14.0;})
     })
     MatchDatePickerMode(Date,                   {
-        Match(component == 0, {return 100;})
-        Match(component == 1, {return 100;})
+        Match(component == 0,                               {return 35*fontSize/14.0;})
+        Match(component == 1,                               {return 80*fontSize/14.0;})
     })
     MatchDatePickerMode(DateAndTime,            {
-        Match(component == 0, {return 100;})
-        Match(component == 1, {return 100;})
-        Match(component == 2, {return 100;})
-        Match(component == 3, {return 100;})
-        Match(component == 4, {return 100;})
+        Match(component == 0,                               {return 35*fontSize/14.0;})
+        Match(component == 1,                               {return 80*fontSize/14.0;})
+        Match(component == 2,                               {return 40*fontSize/14.0;})
+        Match(component == 3,                               {return 40*fontSize/14.0;})
+        Match(component == 4,                               {return 30*fontSize/14.0;})
     })
     MatchDatePickerMode(YearAndDate,            {
-        Match(component == 0, {return 100;})
-        Match(component == 1, {return 100;})
-        Match(component == 2, {return 100;})
+        Match(component == 0,                               {return 50*fontSize/14.0;})
+        Match(component == 1,                               {return 35*fontSize/14.0;})
+        Match(component == 2,                               {return 80*fontSize/14.0;})
     })
     MatchDatePickerMode(YearAndDateAndTime,     {
-        Match(component == 0, {return 50*fontSize/14.0;})
-        Match(component == 1, {return 35*fontSize/14.0;})
-        Match(component == 2, {return 80*fontSize/14.0;})
-        Match(component == 3, {return 40*fontSize/14.0;})
-        Match(component == 4, {return 40*fontSize/14.0;})
-        Match(component == 5, {return 30*fontSize/14.0;})
+        Match(component == 0,                               {return 50*fontSize/14.0;})
+        Match(component == 1,                               {return 35*fontSize/14.0;})
+        Match(component == 2,                               {return 80*fontSize/14.0;})
+        Match(component == 3,                               {return 40*fontSize/14.0;})
+        Match(component == 4,                               {return 40*fontSize/14.0;})
+        Match(component == 5,                               {return 30*fontSize/14.0;})
     })
     
     return 45;
@@ -901,6 +882,8 @@ typedef NS_ENUM(NSUInteger, LYSDateHeaderBarItemType) {
         self.type = LYSDateHeaderBarItemTypeTitle;
         self.title = title;
         self.target = target;
+        self.tintColor = [UIColor blackColor];
+        self.font = [UIFont systemFontOfSize:14];
         NSMethodSignature *signature = [self methodSignatureForSelector:@selector(action:)];
         self.invocation = [NSInvocation invocationWithMethodSignature:signature];
         [self.invocation setTarget:target];
@@ -935,99 +918,223 @@ typedef NS_ENUM(NSUInteger, LYSDateHeaderBarItemType) {
 - (void)action:(UIView *)sender {}
 @end
 
+@interface LYSDateHeadrView ()
+@property (nonatomic, strong) UIView *leftLastView;
+@property (nonatomic, strong) UIView *rightLastView;
+
+@property(nonatomic, assign) BOOL isHasItem;
+@end
+
 @implementation LYSDateHeadrView
 
 - (instancetype)init
 {
     self = [super init];
     if (self) {
-        
-    }
-    return self;
-}
-
-- (instancetype)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
         self.backgroundColor = [UIColor redColor];
     }
     return self;
 }
 
+- (void)setBackgroundHexColor:(NSString *)backgroundHexColor
+{
+    _backgroundHexColor = backgroundHexColor;
+    self.backgroundColor = [self ly_colorWithHex:_backgroundHexColor];
+}
+
+// 颜色格式的转换
+- (UIColor *)ly_colorWithHex:(NSString *)hexColor{
+    // 去除字符串两边的空格
+    hexColor = [hexColor stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    if ([hexColor length] < 6) {return nil;}
+    if ([hexColor hasPrefix:@"#"]) {hexColor = [hexColor substringFromIndex:1];}
+    NSString *red = [hexColor substringWithRange:NSMakeRange(0, 2)];
+    NSString *green = [hexColor substringWithRange:NSMakeRange(2, 2)];
+    NSString *blue = [hexColor substringWithRange:NSMakeRange(4, 2)];
+    unsigned int r, g ,b , a;
+    [[NSScanner scannerWithString:red] scanHexInt:&r];
+    [[NSScanner scannerWithString:green] scanHexInt:&g];
+    [[NSScanner scannerWithString:blue] scanHexInt:&b];
+    if ([hexColor length] == 8) {
+        NSString *as = [hexColor substringWithRange:NSMakeRange(4, 2)];
+        [[NSScanner scannerWithString:as] scanHexInt:&a];
+    }else {
+        a = 255;
+    }
+    return [UIColor colorWithRed:(float)r / 255.0 green:(float)g / 255.0 blue:(float)b / 255.0 alpha:(float)a / 255.0];
+}
+
 - (void)setHeaderBar:(LYSDateHeaderBar *)headerBar
 {
     _headerBar = headerBar;
+    self.isHasItem = NO;
+    NSArray *arr = [NSArray arrayWithArray:self.subviews];
+    for (int i = 0; i < [arr count]; i++) {
+        UIView *view = [arr objectAtIndex:i];
+        [view removeFromSuperview];
+    }
     
-    Match(_headerBar.leftBarItem && _headerBar.leftBarItems && [_headerBar.leftBarItems count] > 0, {
-        CGFloat left = 5;
-        for (int i = 0; i < [_headerBar.leftBarItems count]; i++) {
-            UIView *itemView = [self transitionWithBarItem:_headerBar.leftBarItem];
-            itemView.frame = CGRectMake(left, 0, CGRectGetWidth(itemView.frame), CGRectGetHeight(itemView.frame));
-            [self addSubview:itemView];
-            left += 5;
-        }
-    })
+    if (_headerBar.titleView && _headerBar.title) {
+        [self createTitleView];
+    } else {
+        Match(_headerBar.title,                                                                             {[self createTitle];})
+        Match(_headerBar.titleView,                                                                         {[self createTitleView];})
+    }
     
-    Match(_headerBar.rightBarItem && _headerBar.rightBarItems && [_headerBar.rightBarItems count] > 0, {
-        CGFloat right = 5;
-        for (int i = 0; i < [_headerBar.leftBarItems count]; i++) {
-            UIView *itemView = [self transitionWithBarItem:_headerBar.leftBarItem];
-            itemView.frame = CGRectMake(CGRectGetWidth(self.frame)-CGRectGetWidth(itemView.frame)-right, 0, CGRectGetWidth(itemView.frame), CGRectGetHeight(itemView.frame));
-            [self addSubview:itemView];
-            right += CGRectGetWidth(itemView.frame)+right;
-        }
-    })
+    if (_headerBar.leftBarItem && _headerBar.leftBarItems && [_headerBar.leftBarItems count]) {
+        [self createLeftMoreItem];
+    } else {
+        Match(_headerBar.leftBarItem,                                                                       {[self createLeftSingleItem];})
+        Match(_headerBar.leftBarItems && [_headerBar.leftBarItems count],                                   {[self createLeftMoreItem];})
+    }
     
-    Match(_headerBar.leftBarItem, {
-        UIView *itemView = [self transitionWithBarItem:_headerBar.leftBarItem];
-        itemView.frame = CGRectMake(5, 0, CGRectGetWidth(itemView.frame), CGRectGetHeight(itemView.frame));
+    if (_headerBar.rightBarItem && _headerBar.rightBarItems && [_headerBar.rightBarItems count]) {
+        [self createRightMoreItem];
+    } else {
+        Match(_headerBar.rightBarItem,                                                                      {[self createRightSingleItem];})
+        Match(_headerBar.rightBarItems && [_headerBar.rightBarItems count],                                 {[self createRightMoreItem];})
+    }
+    
+}
+
+- (void)createTitle
+{
+    UILabel *label = [[UILabel alloc] init];
+    label.text = _headerBar.title;
+    label.textColor = _headerBar.titleColor;
+    label.font = _headerBar.titleFont;
+    label.textAlignment = NSTextAlignmentCenter;
+    [label sizeToFit];
+    [self addSubview:label];
+    label.translatesAutoresizingMaskIntoConstraints = NO;
+    Layout(label, CenterX, Equal, self, CenterX, 1.0f, 0).active = YES;
+    Layout(label, CenterY, Equal, self, CenterY, 1.0f, 0).active = YES;
+}
+
+- (void)createTitleView
+{
+    [self addSubview:_headerBar.titleView];
+    _headerBar.titleView.translatesAutoresizingMaskIntoConstraints = NO;
+    Layout(_headerBar.titleView, CenterX, Equal, self, CenterX, 1.0f, 0).active = YES;
+    Layout(_headerBar.titleView, CenterY, Equal, self, CenterY, 1.0f, 0).active = YES;
+}
+
+- (void)createLeftSingleItem
+{
+    UIView *itemView = [self transitionWithBarItem:_headerBar.leftBarItem];
+    [self addSubview:itemView];
+    itemView.translatesAutoresizingMaskIntoConstraints = NO;
+    Layout(itemView, Left, Equal, self, Left, 1.0f, 5).active = YES;
+    Layout(itemView, Top, Equal, self, Top, 1.0f, 0).active = YES;
+    Layout(itemView, Bottom, Equal, self, Bottom, 1.0f, 0).active = YES;
+    UIView *subView = [[itemView subviews] objectAtIndex:0];
+    Layout(itemView, Width, Equal, subView, Width, 1.0f, 10).active = YES;
+    self.leftLastView = itemView;
+}
+
+- (void)createLeftMoreItem
+{
+    UIView *leftView = nil;
+    for (int i = 0; i < [_headerBar.leftBarItems count]; i++) {
+        LYSDateHeaderBarItem *item = [_headerBar.leftBarItems objectAtIndex:i];
+        UIView *itemView = [self transitionWithBarItem:item];
         [self addSubview:itemView];
-    })
-    
-    Match(_headerBar.leftBarItems && [_headerBar.leftBarItems count] > 0, {
-        CGFloat left = 5;
-        for (int i = 0; i < [_headerBar.leftBarItems count]; i++) {
-            UIView *itemView = [self transitionWithBarItem:_headerBar.leftBarItem];
-            itemView.frame = CGRectMake(left, 0, CGRectGetWidth(itemView.frame), CGRectGetHeight(itemView.frame));
-            [self addSubview:itemView];
-            left += 5;
+        itemView.translatesAutoresizingMaskIntoConstraints = NO;
+        Layout(itemView, Top, Equal, self, Top, 1.0f, 0).active = YES;
+        Layout(itemView, Bottom, Equal, self, Bottom, 1.0f, 0).active = YES;
+        UIView *subView = [[itemView subviews] objectAtIndex:0];
+        Layout(itemView, Width, Equal, subView, Width, 1.0f, 10).active = YES;
+        if (i == 0) {
+            Layout(itemView, Left, Equal, self, Left, 1.0f, 5).active = YES;
+        } else {
+            Layout(itemView, Left, Equal, leftView, Right, 1.0f, 5).active = YES;
         }
-    })
-    
-    Match(_headerBar.rightBarItem, {
-        UIView *itemView = [self transitionWithBarItem:_headerBar.leftBarItem];
-        itemView.frame = CGRectMake(CGRectGetWidth(self.frame)-CGRectGetWidth(itemView.frame)-5, 0, CGRectGetWidth(itemView.frame), CGRectGetHeight(itemView.frame));
+        leftView = itemView;
+        self.leftLastView = itemView;
+    }
+}
+
+- (void)createRightSingleItem
+{
+    UIView *itemView = [self transitionWithBarItem:_headerBar.rightBarItem];
+    [self addSubview:itemView];
+    itemView.translatesAutoresizingMaskIntoConstraints = NO;
+    Layout(itemView, Right, Equal, self, Right, 1.0f, -5).active = YES;
+    Layout(itemView, Top, Equal, self, Top, 1.0f, 0).active = YES;
+    Layout(itemView, Bottom, Equal, self, Bottom, 1.0f, 0).active = YES;
+    UIView *subView = [[itemView subviews] objectAtIndex:0];
+    Layout(itemView, Width, Equal, subView, Width, 1.0f, 10).active = YES;
+    self.rightLastView = itemView;
+}
+
+- (void)createRightMoreItem
+{
+    UIView *rightView = nil;
+    for (int i = 0; i < [_headerBar.rightBarItems count]; i++) {
+        LYSDateHeaderBarItem *item = [_headerBar.rightBarItems objectAtIndex:i];
+        UIView *itemView = [self transitionWithBarItem:item];
         [self addSubview:itemView];
-    })
-    
-    Match(_headerBar.rightBarItems && [_headerBar.rightBarItems count] > 0, {
-        CGFloat right = 5;
-        for (int i = 0; i < [_headerBar.leftBarItems count]; i++) {
-            UIView *itemView = [self transitionWithBarItem:_headerBar.leftBarItem];
-            itemView.frame = CGRectMake(CGRectGetWidth(self.frame)-CGRectGetWidth(itemView.frame)-right, 0, CGRectGetWidth(itemView.frame), CGRectGetHeight(itemView.frame));
-            [self addSubview:itemView];
-            right += CGRectGetWidth(itemView.frame)+right;
+        itemView.translatesAutoresizingMaskIntoConstraints = NO;
+        Layout(itemView, Top, Equal, self, Top, 1.0f, 0).active = YES;
+        Layout(itemView, Bottom, Equal, self, Bottom, 1.0f, 0).active = YES;
+        UIView *subView = [[itemView subviews] objectAtIndex:0];
+        Layout(itemView, Width, Equal, subView, Width, 1.0f, 10).active = YES;
+        if (i == 0) {
+            Layout(itemView, Right, Equal, self, Right, 1.0f, -5).active = YES;
+        } else {
+            Layout(itemView, Right, Equal, rightView, Left, 1.0f, -5).active = YES;
         }
-    })
-    
+        rightView = itemView;
+        self.rightLastView = itemView;
+    }
 }
 
 - (UIView *)transitionWithBarItem:(LYSDateHeaderBarItem *)item
 {
-    UIView *contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 40, CGRectGetHeight(self.frame))];
+    UIView *contentView = [[UIView alloc] init];
     Match(item.type == LYSDateHeaderBarItemTypeTitle, {
         UILabel *label = [[UILabel alloc] init];
         label.text = item.title;
         label.textColor = item.tintColor;
         label.font = item.font;
         [label sizeToFit];
-        contentView.frame = CGRectMake(0, 0, CGRectGetWidth(label.frame)+5, CGRectGetHeight(self.frame));
-        NSLog(@"%@",contentView);
-        label.frame = CGRectMake(2.5, (CGRectGetHeight(self.frame) - CGRectGetHeight(label.frame))/2.0, CGRectGetWidth(label.frame), CGRectGetHeight(label.frame));
         [contentView addSubview:label];
+        label.translatesAutoresizingMaskIntoConstraints = NO;
+        Layout(label, CenterX,    Equal, contentView,  CenterX,            1.0f, 0).active = YES;
+        Layout(label, CenterY,   Equal, contentView,  CenterY,           1.0f, 0).active = YES;
+        objc_setAssociatedObject(contentView, @"item", item, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clickAction:)];
+        [contentView addGestureRecognizer:tap];
+    })
+    Match(item.type == LYSDateHeaderBarItemTypeImage, {
+        UIImageView *imageView = [[UIImageView alloc] init];
+        imageView.image = item.image;
+        [contentView addSubview:imageView];
+        imageView.translatesAutoresizingMaskIntoConstraints = NO;
+        Layout(imageView, CenterX,    Equal, contentView,  CenterX,            1.0f, 0).active = YES;
+        Layout(imageView, CenterY,   Equal, contentView,  CenterY,           1.0f, 0).active = YES;
+        Layout(imageView, Width,   Equal, nil,  NotAnAttribute,           1.0f, 25).active = YES;
+        Layout(imageView, Height,   Equal, nil,  NotAnAttribute,           1.0f, 25).active = YES;
+        objc_setAssociatedObject(contentView, @"item", item, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clickAction:)];
+        [contentView addGestureRecognizer:tap];
+    })
+    
+    Match(item.type == LYSDateHeaderBarItemTypeCustom, {
+        [contentView addSubview:item.customView];
+        item.customView.translatesAutoresizingMaskIntoConstraints = NO;
+        Layout(item.customView, CenterX,    Equal, contentView,  CenterX,            1.0f, 0).active = YES;
+        Layout(item.customView, CenterY,   Equal, contentView,  CenterY,           1.0f, 0).active = YES;
+        Layout(item.customView, Width,   Equal, contentView,  Width,           1.0f, 25).active = YES;
+        Layout(item.customView, Height,   Equal, contentView,  Height,           1.0f, 25).active = YES;
     })
     return contentView;
+}
+
+- (void)clickAction:(UITapGestureRecognizer *)sender
+{
+    LYSDateHeaderBarItem *item = objc_getAssociatedObject(sender.view, @"item");
+    [item.invocation invoke];
 }
 
 @end
