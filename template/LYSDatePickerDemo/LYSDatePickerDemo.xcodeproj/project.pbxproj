@@ -29,6 +29,7 @@
 		3E7C657920F09FEB00BEEA04 /* fit.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E7C657620F09FEA00BEEA04 /* fit.png */; };
 		3E7C657D20F0B9A100BEEA04 /* LYSDatePicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E7C657C20F0B9A100BEEA04 /* LYSDatePicker.m */; };
 		3E7C657F20F0B9D100BEEA04 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 3E7C657E20F0B9D100BEEA04 /* README.md */; };
+		3E7C658120F0D5B100BEEA04 /* LYSDatePicker.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 3E7C658020F0D5B100BEEA04 /* LYSDatePicker.podspec */; };
 		3ED3F25920EFA59700978A72 /* OneViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ED3F25820EFA59700978A72 /* OneViewController.m */; };
 		3ED3F25C20EFA59D00978A72 /* TwoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ED3F25B20EFA59D00978A72 /* TwoViewController.m */; };
 		3ED3F25F20EFA5A400978A72 /* ThreeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ED3F25E20EFA5A400978A72 /* ThreeViewController.m */; };
@@ -98,6 +99,7 @@
 		3E7C657B20F0B9A100BEEA04 /* LYSDatePicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LYSDatePicker.h; sourceTree = "<group>"; };
 		3E7C657C20F0B9A100BEEA04 /* LYSDatePicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LYSDatePicker.m; sourceTree = "<group>"; };
 		3E7C657E20F0B9D100BEEA04 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../../../README.md; sourceTree = "<group>"; };
+		3E7C658020F0D5B100BEEA04 /* LYSDatePicker.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LYSDatePicker.podspec; path = ../../../LYSDatePicker.podspec; sourceTree = "<group>"; };
 		3ED3F25720EFA59700978A72 /* OneViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OneViewController.h; sourceTree = "<group>"; };
 		3ED3F25820EFA59700978A72 /* OneViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OneViewController.m; sourceTree = "<group>"; };
 		3ED3F25A20EFA59D00978A72 /* TwoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TwoViewController.h; sourceTree = "<group>"; };
@@ -174,6 +176,7 @@
 				3E7B43F020E8A78F00C374CA /* AppDelegate.h */,
 				3E7B43F120E8A78F00C374CA /* AppDelegate.m */,
 				3E7C657E20F0B9D100BEEA04 /* README.md */,
+				3E7C658020F0D5B100BEEA04 /* LYSDatePicker.podspec */,
 				3E7C657A20F0B9A100BEEA04 /* LYSDatePicker */,
 				3ED3F27220EFAF0200978A72 /* 图片 */,
 				3ED3F26F20EFAA9C00978A72 /* BaseViewController.h */,
@@ -380,6 +383,7 @@
 				3E7C657920F09FEB00BEEA04 /* fit.png in Resources */,
 				3E7B43FD20E8A78F00C374CA /* LaunchScreen.storyboard in Resources */,
 				3ED3F26E20EFA9BB00978A72 /* back@3x.png in Resources */,
+				3E7C658120F0D5B100BEEA04 /* LYSDatePicker.podspec in Resources */,
 				3ED3F26D20EFA9BB00978A72 /* back@2x.png in Resources */,
 				3E7C657820F09FEB00BEEA04 /* fit@3x.png in Resources */,
 				3E7C657720F09FEB00BEEA04 /* fit@2x.png in Resources */,
