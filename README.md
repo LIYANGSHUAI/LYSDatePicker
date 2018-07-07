@@ -2,7 +2,7 @@
 
 In development, I try to reduce the size of the file, just hope that the user does not pay attention to the specific implementation, but just use the provided API to achieve the desired effect, so put all the file classes into a class file, if you open Class .m file sees more than a thousand lines of code in the class, don't dizzy
 
-![iOS 技术群群二维码](https://github.com/LIYANGSHUAI/LYSDatePicker/blob/master/resource/iOS 技术群群二维码.png)
+![iOS 技术群群二维码](https://github.com/LIYANGSHUAI/LYSDatePicker/blob/master/resource/iOS技术群群二维码.png)
 
 ![效果图](https://github.com/LIYANGSHUAI/LYSDatePicker/blob/master/resource/目录.png)
 ![效果图](https://github.com/LIYANGSHUAI/LYSDatePicker/blob/master/resource/系统(时间).png)
@@ -22,6 +22,7 @@ In development, I try to reduce the size of the file, just hope that the user do
 
 
 ```objc
+
 #import <UIKit/UIKit.h>
 
 /*
@@ -66,30 +67,30 @@ LYSDatePickerWeekDayTypeVeryShortWeekdaySymbols,                    // 日,一,�
 
 extern NSString *const LYSDatePickerDidSelectDateNotifition;
 
-@class LYSDatePickerView;
+@class LYSDatePicker;
 @class LYSDateHeaderBarItem,LYSDateHeaderBar,LYSDateHeadrView;
 
 /// The data of the date selector can be obtained by following the class of the LYSDatePickerViewDataSource protocol.
-@protocol LYSDatePickerViewDataSource<NSObject>
+@protocol LYSDatePickerDataSource<NSObject>
 
 @optional
-- (void)datePicker:(LYSDatePickerView *)pickerView didSelectDate:(NSDate *)date;
+- (void)datePicker:(LYSDatePicker *)pickerView didSelectDate:(NSDate *)date;
 @end
 
 /// Follow the LYSDatePickerViewDelegate protocol to control the layout of higher date selectors
-@protocol LYSDatePickerViewDelegate<NSObject>
+@protocol LYSDatePickerDelegate<NSObject>
 
 @optional
-- (CGFloat)datePicker:(LYSDatePickerView *)pickerView componentWidthOfIndex:(NSInteger)index;
+- (CGFloat)datePicker:(LYSDatePicker *)pickerView componentWidthOfIndex:(NSInteger)index;
 
 @end
 
-@interface LYSDatePickerView : UIView
+@interface LYSDatePicker : UIView
 
 /// Data protocol
-@property (nonatomic, assign) id<LYSDatePickerViewDataSource> dataSource;
+@property (nonatomic, assign) id<LYSDatePickerDataSource> dataSource;
 /// Layout agreement
-@property (nonatomic, assign) id<LYSDatePickerViewDelegate> delegate;
+@property (nonatomic, assign) id<LYSDatePickerDelegate> delegate;
 
 /// Whether to show the top status bar, the default is YES
 @property (nonatomic, assign) BOOL enableShowHeader;
