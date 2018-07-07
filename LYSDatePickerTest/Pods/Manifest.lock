@@ -1,0 +1,16 @@
+PODS:
+  - LYSDatePicker (0.0.1)
+
+DEPENDENCIES:
+  - LYSDatePicker (~> 0.0.1)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - LYSDatePicker
+
+SPEC CHECKSUMS:
+  LYSDatePicker: 2ead5eb01f0c3ad330f10e2e47506f34de3d60e9
+
+PODFILE CHECKSUM: d83293a481a357ecae36223b57987f0ea435bbb2
+
+COCOAPODS: 1.5.3
