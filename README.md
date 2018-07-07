@@ -4,6 +4,26 @@ LYSDatePicker is mainly to adapt to the scenes that need to choose the date in d
 
 ![iOS技术群群二维码](https://github.com/LIYANGSHUAI/LYSDatePicker/blob/master/resource/iOS技术群群二维码.JPG)
 
+使用方法:(目前支持iOS 8.0以上)
+
+为了方便大家引入,我加入了Cocoapods管理,使用终端 pod search LYSDatePicker
+
+不出意外的情况下,会查出
+
+```objc
+-> LYSDatePicker (0.0.1)
+I hope everyone will give me some advice during the process of use. I want to
+go further.
+pod 'LYSDatePicker', '~> 0.0.1'
+- Homepage: https://github.com/LIYANGSHUAI/LYSDatePicker
+- Source:   https://github.com/LIYANGSHUAI/LYSDatePicker.git
+- Versions: 0.0.1 [master repo]
+(END)
+```
+
+直接粘贴: pod 'LYSDatePicker', '~> 0.0.1'
+
+
 Here is the usage scenario I thought of as much as possible, as a reference
 
 ![效果图](https://github.com/LIYANGSHUAI/LYSDatePicker/blob/master/resource/目录.png)

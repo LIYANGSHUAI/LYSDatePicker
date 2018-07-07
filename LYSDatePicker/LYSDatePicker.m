@@ -378,8 +378,8 @@ NSString *const LYSDatePickerDidSelectDateNotifition = @"LYSDatePickerDidSelectD
     self.fromYear = 1900;
     self.toYear = 2100;
     self.date = [NSDate date];
-    self.minimumDate = [NSDate dateWithTimeIntervalSinceNow:-3600*24*31*12];
-    self.maximumDate = [NSDate dateWithTimeIntervalSinceNow:3600*24*31*12];
+    self.minimumDate = nil;
+    self.maximumDate = nil;
     self.dayNum = 31;
     self.hourStandard = LYSDatePickerStandardDefault;
     self.AMStr = @"AM";
@@ -976,7 +976,6 @@ typedef NS_ENUM(NSUInteger, LYSDateHeaderBarItemType) {
     }
     
     if (_headerBar.titleView && _headerBar.title) {
-        NSLog(@"xxxx");
         [self createTitleView];
     } else {
         Match(_headerBar.title,                                                                             {[self createTitle];})
@@ -1146,7 +1145,6 @@ typedef NS_ENUM(NSUInteger, LYSDateHeaderBarItemType) {
 @implementation LYSDateHeaderBarContent
 - (void)dealloc
 {
-    NSLog(@"释放");
     objc_removeAssociatedObjects(self);
 }
 @end
