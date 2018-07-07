@@ -1,12 +1,12 @@
 //
-//  LYSDatePickerView.m
+//  LYSDatePicker.m
 //  LYSDatePickerDemo
 //
 //  Created by liyangshuai on 2018/7/1.
 //  Copyright © 2018年 liyangshuai. All rights reserved.
 //
 
-#import "LYSDatePickerView.h"
+#import "LYSDatePicker.h"
 #import <objc/runtime.h>
 
 typedef NS_ENUM(NSInteger, LYSLayoutAttr) {
@@ -306,7 +306,7 @@ NSLog(@">>>>>>>\nWARN:%@\n>>>>>>>",B);\
 
 NSString *const LYSDatePickerDidSelectDateNotifition = @"LYSDatePickerDidSelectDateNotifition";
 
-@interface LYSDatePickerView ()<UIPickerViewDelegate,UIPickerViewDataSource>
+@interface LYSDatePicker ()<UIPickerViewDelegate,UIPickerViewDataSource>
 @property (nonatomic, strong)  UIPickerView        *pickerView;
 @property (nonatomic, strong)  UIDatePicker        *datePicker;
 @property (nonatomic, assign)  LYSPickerDate       currentDate;
@@ -315,7 +315,7 @@ NSString *const LYSDatePickerDidSelectDateNotifition = @"LYSDatePickerDidSelectD
 @property (nonatomic, strong)  NSArray             *weekDayStrArr;
 @end
 
-@implementation LYSDatePickerView
+@implementation LYSDatePicker
 
 #pragma mark - Override initialization method -
 - (instancetype)initWithFrame:(CGRect)frame type:(LYSDatePickerType)type

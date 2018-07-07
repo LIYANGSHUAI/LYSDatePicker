@@ -8,8 +8,8 @@
 //
 
 #import "OneViewController.h"
-#import "LYSDatePickerView.h"
-@interface OneViewController ()<LYSDatePickerViewDelegate,LYSDatePickerViewDataSource>
+
+@interface OneViewController ()
 
 @end
 
@@ -19,7 +19,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 
-    LYSDatePickerView *pickerView = [[LYSDatePickerView alloc] initWithFrame:CGRectMake(0, 100, CGRectGetWidth(self.view.frame), 256) type:(LYSDatePickerTypeSystem)];
+    LYSDatePicker *pickerView = [[LYSDatePicker alloc] initWithFrame:CGRectMake(0, 100, CGRectGetWidth(self.view.frame), 256) type:(LYSDatePickerTypeSystem)];
     pickerView.datePickerMode = LYSDatePickerModeTime;
     pickerView.date = [NSDate date];
     pickerView.headerView.headerBar = self.headerBar;
@@ -28,13 +28,7 @@
     [self.view addSubview:pickerView];
     
 }
-
-- (CGFloat)datePicker:(LYSDatePickerView *)pickerView componentWidthOfIndex:(NSInteger)index
-{
-    return 100;
-}
-
-
+\
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.

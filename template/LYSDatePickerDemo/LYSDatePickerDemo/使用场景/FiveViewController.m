@@ -7,8 +7,8 @@
 //
 
 #import "FiveViewController.h"
-#import "LYSDatePickerView.h"
-@interface FiveViewController ()<LYSDatePickerViewDelegate,LYSDatePickerViewDataSource>
+
+@interface FiveViewController ()
 
 @end
 
@@ -18,7 +18,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    LYSDatePickerView *pickerView = [[LYSDatePickerView alloc] initWithFrame:CGRectMake(0, 100, CGRectGetWidth(self.view.frame), 256) type:(LYSDatePickerTypeCustom)];
+    LYSDatePicker *pickerView = [[LYSDatePicker alloc] initWithFrame:CGRectMake(0, 100, CGRectGetWidth(self.view.frame), 256) type:(LYSDatePickerTypeCustom)];
     pickerView.datePickerMode = LYSDatePickerModeTime;
     pickerView.hourStandard = LYSDatePickerStandard12Hour;
     pickerView.date = [NSDate date];

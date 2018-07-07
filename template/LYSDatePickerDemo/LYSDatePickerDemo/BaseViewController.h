@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-@class LYSDateHeaderBar;
-@interface BaseViewController : UIViewController
+#import "LYSDatePicker.h"
+
+@interface BaseViewController : UIViewController<LYSDatePickerDelegate,LYSDatePickerDataSource>
 @property (nonatomic, strong) LYSDateHeaderBar *headerBar;
 @end

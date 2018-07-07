@@ -7,8 +7,8 @@
 //
 
 #import "NineViewController.h"
-#import "LYSDatePickerView.h"
-@interface NineViewController ()<LYSDatePickerViewDelegate,LYSDatePickerViewDataSource>
+
+@interface NineViewController ()
 
 @end
 
@@ -18,7 +18,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    LYSDatePickerView *pickerView = [[LYSDatePickerView alloc] initWithFrame:CGRectMake(0, 100, CGRectGetWidth(self.view.frame), 256) type:(LYSDatePickerTypeCustom)];
+    LYSDatePicker *pickerView = [[LYSDatePicker alloc] initWithFrame:CGRectMake(0, 100, CGRectGetWidth(self.view.frame), 256) type:(LYSDatePickerTypeCustom)];
     pickerView.datePickerMode = LYSDatePickerModeDateAndTime;
     pickerView.weekDayType = LYSDatePickerWeekDayTypeWeekdaySymbols;
     pickerView.date = [NSDate date];

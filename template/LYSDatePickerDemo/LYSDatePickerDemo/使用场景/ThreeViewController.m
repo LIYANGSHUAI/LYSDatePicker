@@ -7,8 +7,8 @@
 //
 
 #import "ThreeViewController.h"
-#import "LYSDatePickerView.h"
-@interface ThreeViewController ()<LYSDatePickerViewDelegate,LYSDatePickerViewDataSource>
+
+@interface ThreeViewController ()
 
 @end
 
@@ -18,7 +18,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    LYSDatePickerView *pickerView = [[LYSDatePickerView alloc] initWithFrame:CGRectMake(0, 100, CGRectGetWidth(self.view.frame), 256) type:(LYSDatePickerTypeSystem)];
+    LYSDatePicker *pickerView = [[LYSDatePicker alloc] initWithFrame:CGRectMake(0, 100, CGRectGetWidth(self.view.frame), 256) type:(LYSDatePickerTypeSystem)];
     pickerView.datePickerMode = LYSDatePickerModeDateAndTime;
     pickerView.date = [NSDate date];
     pickerView.headerView.headerBar = self.headerBar;

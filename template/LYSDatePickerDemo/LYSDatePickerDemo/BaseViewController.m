@@ -7,7 +7,6 @@
 //
 
 #import "BaseViewController.h"
-#import "LYSDatePickerView.h"
 
 @interface BaseViewController ()
 
@@ -50,7 +49,7 @@
     NSLog(@"确定");
 }
 
-- (void)datePicker:(LYSDatePickerView *)pickerView didSelectDate:(NSDate *)date
+- (void)datePicker:(LYSDatePicker *)pickerView didSelectDate:(NSDate *)date
 {
     NSLog(@"%@",date);
 }

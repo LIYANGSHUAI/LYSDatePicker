@@ -50,30 +50,30 @@ typedef NS_ENUM(NSUInteger, LYSDatePickerWeekDayType) {
 
 extern NSString *const LYSDatePickerDidSelectDateNotifition;
 
-@class LYSDatePickerView;
+@class LYSDatePicker;
 @class LYSDateHeaderBarItem,LYSDateHeaderBar,LYSDateHeadrView;
 
 /// The data of the date selector can be obtained by following the class of the LYSDatePickerViewDataSource protocol.
-@protocol LYSDatePickerViewDataSource<NSObject>
+@protocol LYSDatePickerDataSource<NSObject>
 
 @optional
-- (void)datePicker:(LYSDatePickerView *)pickerView didSelectDate:(NSDate *)date;
+- (void)datePicker:(LYSDatePicker *)pickerView didSelectDate:(NSDate *)date;
 @end
 
 /// Follow the LYSDatePickerViewDelegate protocol to control the layout of higher date selectors
-@protocol LYSDatePickerViewDelegate<NSObject>
+@protocol LYSDatePickerDelegate<NSObject>
 
 @optional
-- (CGFloat)datePicker:(LYSDatePickerView *)pickerView componentWidthOfIndex:(NSInteger)index;
+- (CGFloat)datePicker:(LYSDatePicker *)pickerView componentWidthOfIndex:(NSInteger)index;
 
 @end
 
-@interface LYSDatePickerView : UIView
+@interface LYSDatePicker : UIView
 
 /// Data protocol
-@property (nonatomic, assign) id<LYSDatePickerViewDataSource> dataSource;
+@property (nonatomic, assign) id<LYSDatePickerDataSource> dataSource;
 /// Layout agreement
-@property (nonatomic, assign) id<LYSDatePickerViewDelegate> delegate;
+@property (nonatomic, assign) id<LYSDatePickerDelegate> delegate;
 
 /// Whether to show the top status bar, the default is YES
 @property (nonatomic, assign) BOOL enableShowHeader;

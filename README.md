@@ -1,6 +1,8 @@
-# LYSDatePickerController
+# LYSDatePicker
 
 In development, I try to reduce the size of the file, just hope that the user does not pay attention to the specific implementation, but just use the provided API to achieve the desired effect, so put all the file classes into a class file, if you open Class .m file sees more than a thousand lines of code in the class, don't dizzy
+
+![iOS 技术群群二维码](https://github.com/LIYANGSHUAI/LYSDatePicker/blob/master/resource/iOS 技术群群二维码.png)
 
 ![效果图](https://github.com/LIYANGSHUAI/LYSDatePicker/blob/master/resource/目录.png)
 ![效果图](https://github.com/LIYANGSHUAI/LYSDatePicker/blob/master/resource/系统(时间).png)

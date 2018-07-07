@@ -8,8 +8,7 @@
 
 #import "TenViewController.h"
 
-#import "LYSDatePickerView.h"
-@interface TenViewController ()<LYSDatePickerViewDelegate,LYSDatePickerViewDataSource>
+@interface TenViewController ()
 
 @end
 
@@ -19,7 +18,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    LYSDatePickerView *pickerView = [[LYSDatePickerView alloc] initWithFrame:CGRectMake(0, 100, CGRectGetWidth(self.view.frame), 256) type:(LYSDatePickerTypeCustom)];
+    LYSDatePicker *pickerView = [[LYSDatePicker alloc] initWithFrame:CGRectMake(0, 100, CGRectGetWidth(self.view.frame), 256) type:(LYSDatePickerTypeCustom)];
     pickerView.datePickerMode = LYSDatePickerModeYearAndDate;
     pickerView.date = [NSDate date];
     pickerView.headerView.headerBar = self.headerBar;
