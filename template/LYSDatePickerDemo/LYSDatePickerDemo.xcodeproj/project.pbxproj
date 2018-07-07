@@ -15,7 +15,6 @@
 		3E7B440020E8A78F00C374CA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E7B43FF20E8A78F00C374CA /* main.m */; };
 		3E7B440A20E8A78F00C374CA /* LYSDatePickerDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E7B440920E8A78F00C374CA /* LYSDatePickerDemoTests.m */; };
 		3E7B441520E8A78F00C374CA /* LYSDatePickerDemoUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E7B441420E8A78F00C374CA /* LYSDatePickerDemoUITests.m */; };
-		3E7B442820E8D05B00C374CA /* LYSDatePickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E7B442720E8D05B00C374CA /* LYSDatePickerView.m */; };
 		3E7C655520F0659500BEEA04 /* TwelveViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E7C655420F0659500BEEA04 /* TwelveViewController.m */; };
 		3E7C655820F0668400BEEA04 /* ThirteenvewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E7C655720F0668400BEEA04 /* ThirteenvewController.m */; };
 		3E7C655B20F066F700BEEA04 /* FifteenViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E7C655A20F066F700BEEA04 /* FifteenViewController.m */; };
@@ -28,6 +27,8 @@
 		3E7C657720F09FEB00BEEA04 /* fit@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E7C657420F09FEA00BEEA04 /* fit@2x.png */; };
 		3E7C657820F09FEB00BEEA04 /* fit@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E7C657520F09FEA00BEEA04 /* fit@3x.png */; };
 		3E7C657920F09FEB00BEEA04 /* fit.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E7C657620F09FEA00BEEA04 /* fit.png */; };
+		3E7C657D20F0B9A100BEEA04 /* LYSDatePickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E7C657C20F0B9A100BEEA04 /* LYSDatePickerView.m */; };
+		3E7C657F20F0B9D100BEEA04 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 3E7C657E20F0B9D100BEEA04 /* README.md */; };
 		3ED3F25920EFA59700978A72 /* OneViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ED3F25820EFA59700978A72 /* OneViewController.m */; };
 		3ED3F25C20EFA59D00978A72 /* TwoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ED3F25B20EFA59D00978A72 /* TwoViewController.m */; };
 		3ED3F25F20EFA5A400978A72 /* ThreeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ED3F25E20EFA5A400978A72 /* ThreeViewController.m */; };
@@ -77,8 +78,6 @@
 		3E7B441020E8A78F00C374CA /* LYSDatePickerDemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LYSDatePickerDemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E7B441420E8A78F00C374CA /* LYSDatePickerDemoUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LYSDatePickerDemoUITests.m; sourceTree = "<group>"; };
 		3E7B441620E8A78F00C374CA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		3E7B442620E8D05B00C374CA /* LYSDatePickerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LYSDatePickerView.h; sourceTree = "<group>"; };
-		3E7B442720E8D05B00C374CA /* LYSDatePickerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LYSDatePickerView.m; sourceTree = "<group>"; };
 		3E7C655320F0659500BEEA04 /* TwelveViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TwelveViewController.h; sourceTree = "<group>"; };
 		3E7C655420F0659500BEEA04 /* TwelveViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TwelveViewController.m; sourceTree = "<group>"; };
 		3E7C655620F0668400BEEA04 /* ThirteenvewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThirteenvewController.h; sourceTree = "<group>"; };
@@ -96,6 +95,9 @@
 		3E7C657420F09FEA00BEEA04 /* fit@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fit@2x.png"; sourceTree = "<group>"; };
 		3E7C657520F09FEA00BEEA04 /* fit@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fit@3x.png"; sourceTree = "<group>"; };
 		3E7C657620F09FEA00BEEA04 /* fit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fit.png; sourceTree = "<group>"; };
+		3E7C657B20F0B9A100BEEA04 /* LYSDatePickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LYSDatePickerView.h; sourceTree = "<group>"; };
+		3E7C657C20F0B9A100BEEA04 /* LYSDatePickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LYSDatePickerView.m; sourceTree = "<group>"; };
+		3E7C657E20F0B9D100BEEA04 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../../../README.md; sourceTree = "<group>"; };
 		3ED3F25720EFA59700978A72 /* OneViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OneViewController.h; sourceTree = "<group>"; };
 		3ED3F25820EFA59700978A72 /* OneViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OneViewController.m; sourceTree = "<group>"; };
 		3ED3F25A20EFA59D00978A72 /* TwoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TwoViewController.h; sourceTree = "<group>"; };
@@ -171,13 +173,14 @@
 			children = (
 				3E7B43F020E8A78F00C374CA /* AppDelegate.h */,
 				3E7B43F120E8A78F00C374CA /* AppDelegate.m */,
+				3E7C657E20F0B9D100BEEA04 /* README.md */,
+				3E7C657A20F0B9A100BEEA04 /* LYSDatePicker */,
 				3ED3F27220EFAF0200978A72 /* 图片 */,
 				3ED3F26F20EFAA9C00978A72 /* BaseViewController.h */,
 				3ED3F27020EFAA9C00978A72 /* BaseViewController.m */,
 				3E7B43F320E8A78F00C374CA /* ViewController.h */,
 				3E7B43F420E8A78F00C374CA /* ViewController.m */,
 				3ED3F25620EFA56500978A72 /* 使用场景 */,
-				3E7B442220E8CBB000C374CA /* LYSDatePicker */,
 				3E7B43F620E8A78F00C374CA /* Main.storyboard */,
 				3E7B43F920E8A78F00C374CA /* Assets.xcassets */,
 				3E7B43FB20E8A78F00C374CA /* LaunchScreen.storyboard */,
@@ -205,13 +208,14 @@
 			path = LYSDatePickerDemoUITests;
 			sourceTree = "<group>";
 		};
-		3E7B442220E8CBB000C374CA /* LYSDatePicker */ = {
+		3E7C657A20F0B9A100BEEA04 /* LYSDatePicker */ = {
 			isa = PBXGroup;
 			children = (
-				3E7B442620E8D05B00C374CA /* LYSDatePickerView.h */,
-				3E7B442720E8D05B00C374CA /* LYSDatePickerView.m */,
+				3E7C657B20F0B9A100BEEA04 /* LYSDatePickerView.h */,
+				3E7C657C20F0B9A100BEEA04 /* LYSDatePickerView.m */,
 			);
-			path = LYSDatePicker;
+			name = LYSDatePicker;
+			path = ../../../LYSDatePicker;
 			sourceTree = "<group>";
 		};
 		3ED3F25620EFA56500978A72 /* 使用场景 */ = {
@@ -379,6 +383,7 @@
 				3ED3F26D20EFA9BB00978A72 /* back@2x.png in Resources */,
 				3E7C657820F09FEB00BEEA04 /* fit@3x.png in Resources */,
 				3E7C657720F09FEB00BEEA04 /* fit@2x.png in Resources */,
+				3E7C657F20F0B9D100BEEA04 /* README.md in Resources */,
 				3E7C657320F09F1700BEEA04 /* cancel@3x.png in Resources */,
 				3E7B43FA20E8A78F00C374CA /* Assets.xcassets in Resources */,
 				3E7B43F820E8A78F00C374CA /* Main.storyboard in Resources */,
@@ -411,6 +416,7 @@
 				3E7B43F520E8A78F00C374CA /* ViewController.m in Sources */,
 				3ED3F27120EFAA9C00978A72 /* BaseViewController.m in Sources */,
 				3E7C656420F098EC00BEEA04 /* FiveViewController.m in Sources */,
+				3E7C657D20F0B9A100BEEA04 /* LYSDatePickerView.m in Sources */,
 				3ED3F26220EFA5AA00978A72 /* FourViewController.m in Sources */,
 				3E7C655E20F0671400BEEA04 /* SevenViewController.m in Sources */,
 				3ED3F27520EFB2CF00978A72 /* NineViewController.m in Sources */,
@@ -419,7 +425,6 @@
 				3E7B440020E8A78F00C374CA /* main.m in Sources */,
 				3ED3F27B20EFB49000978A72 /* ElevenViewController.m in Sources */,
 				3ED3F25920EFA59700978A72 /* OneViewController.m in Sources */,
-				3E7B442820E8D05B00C374CA /* LYSDatePickerView.m in Sources */,
 				3ED3F26820EFA5B500978A72 /* EightViewController.m in Sources */,
 				3E7B43F220E8A78F00C374CA /* AppDelegate.m in Sources */,
 				3E7C655B20F066F700BEEA04 /* FifteenViewController.m in Sources */,
