@@ -1,5 +1,4 @@
 # LYSDatePickerController
-简单封装一个日期选择器
 
 ![效果图](https://github.com/LIYANGSHUAI/LYSDatePicker/blob/master/resource/目录.png)
 ![效果图](https://github.com/LIYANGSHUAI/LYSDatePicker/blob/master/resource/系统(时间).png)
