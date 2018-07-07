@@ -81,6 +81,8 @@ extern NSString *const LYSDatePickerDidSelectDateNotifition;
 @property (nonnull, nonatomic, strong) LYSDateHeadrView *headerView;
 /// Height of the status bar
 @property (nonatomic, assign) CGFloat headerHeight;
+/// contentColor color
+@property (nonatomic, strong) UIColor *contentColor;
 
 @property (nonatomic, assign) LYSDatePickerType type;
 @property (nonatomic, assign) LYSDatePickerMode datePickerMode;
@@ -158,8 +160,6 @@ extern NSString *const LYSDatePickerDidSelectDateNotifition;
 /// Custom view
 @property(nonatomic, strong, readonly) UIView *customView;
 
-@property(nonatomic, strong, readonly) id target;
-
 /// Content color
 @property(nonatomic, strong) UIColor *tintColor;
 /// Content font
@@ -171,4 +171,7 @@ extern NSString *const LYSDatePickerDidSelectDateNotifition;
 - (instancetype)initWithImage:(UIImage *)image target:(id)target action:(SEL)action;
 /// Create a custom view button
 - (instancetype)initWithCustomView:(UIView *)customView;
+@end
+
+@interface LYSDateHeaderBarContent : UIView
 @end

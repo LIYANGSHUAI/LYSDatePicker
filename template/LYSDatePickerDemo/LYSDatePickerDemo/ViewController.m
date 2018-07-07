@@ -7,10 +7,24 @@
 //
 
 #import "ViewController.h"
-#import "LYSDatePickerView.h"
-@interface ViewController ()<UITableViewDelegate,UITableViewDataSource,LYSDatePickerViewDataSource>
+#import "OneViewController.h"
+#import "TwoViewController.h"
+#import "ThreeViewController.h"
+#import "FourViewController.h"
+#import "FiveViewController.h"
+#import "SixViewController.h"
+#import "SevenViewController.h"
+#import "EightViewController.h"
+#import "NineViewController.h"
+#import "TenViewController.h"
+#import "ElevenViewController.h"
+#import "TwelveViewController.h"
+#import "ThirteenvewController.h"
+#import "FifteenViewController.h"
+@interface ViewController ()<UITableViewDelegate,UITableViewDataSource>
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
+@property (nonatomic, strong) NSArray *titleAry;
 @end
 
 @implementation ViewController
@@ -18,34 +32,42 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    self.title = @"日期选择器";
+    self.navigationItem.leftBarButtonItem = nil;
+    self.navigationItem.title = @"日期选择器";
     self.tableView.tableFooterView = [UIView new];
+    self.tableView.backgroundColor = [UIColor clearColor];
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"UITableViewCell"];
+    
+    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"TitleAndVC" ofType:@"plist"];
+    
+    self.titleAry = [NSArray arrayWithContentsOfFile:filePath];
+    
+
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 10;
+    return [self.titleAry count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-   UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:(UITableViewCellStyleValue1) reuseIdentifier:@"UITableViewCell"];
-    LYSDatePickerView *pickerView = [[LYSDatePickerView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.frame), 256) type:(LYSDatePickerTypeSystem)];
-    pickerView.dataSource = self;
-    
-    [cell.contentView addSubview:pickerView];
+    UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:(UITableViewCellStyleValue1) reuseIdentifier:@"UITableViewCell"];
+    cell.textLabel.text = [[self.titleAry objectAtIndex:indexPath.row] allKeys][0];
     return cell;
-}
-
-- (void)datePicker:(LYSDatePickerView *)pickerView didSelectDate:(NSDate *)date
-{
-    NSLog(@"%@",date);
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 256;
+    return 40;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSString *str = [[self.titleAry objectAtIndex:indexPath.row] allValues][0];
+    UIViewController *vc = [[NSClassFromString(str) alloc] init];
+    vc.title = [[self.titleAry objectAtIndex:indexPath.row] allKeys][0];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)didReceiveMemoryWarning {

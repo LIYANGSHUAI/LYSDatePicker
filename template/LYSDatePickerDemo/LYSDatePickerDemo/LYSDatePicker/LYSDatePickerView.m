@@ -373,6 +373,7 @@ NSString *const LYSDatePickerDidSelectDateNotifition = @"LYSDatePickerDidSelectD
     self.backgroundColor = [[UIColor grayColor] colorWithAlphaComponent:0.2];
     self.enableShowHeader = YES;
     self.headerHeight = 40;
+    self.contentColor = [UIColor whiteColor];
     self.datePickerMode = LYSDatePickerModeDateAndTime;
     self.fromYear = 1900;
     self.toYear = 2100;
@@ -433,6 +434,7 @@ NSString *const LYSDatePickerDidSelectDateNotifition = @"LYSDatePickerDidSelectD
     NSAssert(self.datePickerMode != LYSDatePickerModeYearAndDate, @"System-provided date picker does not have LYSDatePickerModeYearAndDate style, You can set the LYSDatePickerType type to update using a custom date picker");
     NSAssert(self.datePickerMode != LYSDatePickerModeYearAndDateAndTime, @"System-provided date picker does not have LYSDatePickerModeYearAndDateAndTime style, You can set the LYSDatePickerType type to update using a custom date picker");
     self.datePicker = [[UIDatePicker alloc] init];
+    self.datePicker.backgroundColor = self.contentColor;
     self.datePicker.datePickerMode = (UIDatePickerMode)self.datePickerMode;
     self.datePicker.minimumDate = self.minimumDate;
     self.datePicker.maximumDate = self.maximumDate;
@@ -464,6 +466,7 @@ NSString *const LYSDatePickerDidSelectDateNotifition = @"LYSDatePickerDidSelectD
     self.pickerView = [[UIPickerView alloc] init];
     self.pickerView.delegate = self;
     self.pickerView.dataSource = self;
+    self.pickerView.backgroundColor = self.contentColor;
     [self addSubview:self.pickerView];
     self.pickerView.translatesAutoresizingMaskIntoConstraints = NO;
     
@@ -809,6 +812,7 @@ NSString *const LYSDatePickerDidSelectDateNotifition = @"LYSDatePickerDidSelectD
     [self.pickerView reloadComponent:index];
 }
 
+/// Because the system's date picker has no way to set the distance between the granularities, if you use the system date selector this proxy method does not work, and if it is customized, it will display normally.
 - (CGFloat)pickerView:(UIPickerView *)pickerView widthForComponent:(NSInteger)component
 {
     if (self.delegate && [self.delegate respondsToSelector:@selector(datePicker:componentWidthOfIndex:)]) {
@@ -871,7 +875,6 @@ typedef NS_ENUM(NSUInteger, LYSDateHeaderBarItemType) {
 @property(nonatomic, copy, readwrite) NSString *title;
 @property(nonatomic, strong, readwrite) UIImage *image;
 @property(nonatomic, strong, readwrite) UIView *customView;
-@property(nonatomic, strong, readwrite) id target;
 @property(nonatomic, strong) NSInvocation *invocation;
 @property(nonatomic, assign) LYSDateHeaderBarItemType type;
 @end
@@ -881,9 +884,8 @@ typedef NS_ENUM(NSUInteger, LYSDateHeaderBarItemType) {
     if (self = [super init]) {
         self.type = LYSDateHeaderBarItemTypeTitle;
         self.title = title;
-        self.target = target;
         self.tintColor = [UIColor blackColor];
-        self.font = [UIFont systemFontOfSize:14];
+        self.font = [UIFont systemFontOfSize:16];
         NSMethodSignature *signature = [self methodSignatureForSelector:@selector(action:)];
         self.invocation = [NSInvocation invocationWithMethodSignature:signature];
         [self.invocation setTarget:target];
@@ -897,7 +899,6 @@ typedef NS_ENUM(NSUInteger, LYSDateHeaderBarItemType) {
     if (self = [super init]) {
         self.type = LYSDateHeaderBarItemTypeImage;
         self.image = image;
-        self.target = target;
         NSMethodSignature *signature = [self methodSignatureForSelector:@selector(action:)];
         self.invocation = [NSInvocation invocationWithMethodSignature:signature];
         [self.invocation setTarget:target];
@@ -931,7 +932,7 @@ typedef NS_ENUM(NSUInteger, LYSDateHeaderBarItemType) {
 {
     self = [super init];
     if (self) {
-        self.backgroundColor = [UIColor redColor];
+        self.backgroundColor = [UIColor grayColor];
     }
     return self;
 }
@@ -939,11 +940,11 @@ typedef NS_ENUM(NSUInteger, LYSDateHeaderBarItemType) {
 - (void)setBackgroundHexColor:(NSString *)backgroundHexColor
 {
     _backgroundHexColor = backgroundHexColor;
-    self.backgroundColor = [self ly_colorWithHex:_backgroundHexColor];
+    self.backgroundColor = [self colorWithHex:_backgroundHexColor];
 }
 
 // 颜色格式的转换
-- (UIColor *)ly_colorWithHex:(NSString *)hexColor{
+- (UIColor *)colorWithHex:(NSString *)hexColor{
     // 去除字符串两边的空格
     hexColor = [hexColor stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
     if ([hexColor length] < 6) {return nil;}
@@ -975,6 +976,7 @@ typedef NS_ENUM(NSUInteger, LYSDateHeaderBarItemType) {
     }
     
     if (_headerBar.titleView && _headerBar.title) {
+        NSLog(@"xxxx");
         [self createTitleView];
     } else {
         Match(_headerBar.title,                                                                             {[self createTitle];})
@@ -1091,7 +1093,7 @@ typedef NS_ENUM(NSUInteger, LYSDateHeaderBarItemType) {
 
 - (UIView *)transitionWithBarItem:(LYSDateHeaderBarItem *)item
 {
-    UIView *contentView = [[UIView alloc] init];
+    LYSDateHeaderBarContent *contentView = [[LYSDateHeaderBarContent alloc] init];
     Match(item.type == LYSDateHeaderBarItemTypeTitle, {
         UILabel *label = [[UILabel alloc] init];
         label.text = item.title;
@@ -1136,5 +1138,15 @@ typedef NS_ENUM(NSUInteger, LYSDateHeaderBarItemType) {
     LYSDateHeaderBarItem *item = objc_getAssociatedObject(sender.view, @"item");
     [item.invocation invoke];
 }
+- (void)dealloc{
+    
+}
+@end
 
+@implementation LYSDateHeaderBarContent
+- (void)dealloc
+{
+    NSLog(@"释放");
+    objc_removeAssociatedObjects(self);
+}
 @end

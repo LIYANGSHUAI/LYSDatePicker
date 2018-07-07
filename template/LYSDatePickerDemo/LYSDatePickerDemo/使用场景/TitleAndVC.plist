@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>系统(时间)</key>
+		<string>OneViewController</string>
+	</dict>
+	<dict>
+		<key>系统(日期)</key>
+		<string>TwoViewController</string>
+	</dict>
+	<dict>
+		<key>系统(日期和时间)</key>
+		<string>ThreeViewController</string>
+	</dict>
+	<dict>
+		<key>自定义(时间)</key>
+		<string>FourViewController</string>
+	</dict>
+	<dict>
+		<key>自定义(时间12小时)</key>
+		<string>FiveViewController</string>
+	</dict>
+	<dict>
+		<key>自定义(日期)</key>
+		<string>SixViewController</string>
+	</dict>
+	<dict>
+		<key>自定义(日期和星期)</key>
+		<string>SevenViewController</string>
+	</dict>
+	<dict>
+		<key>自定义(日期和时间)</key>
+		<string>EightViewController</string>
+	</dict>
+	<dict>
+		<key>自定义(日期和时间和星期)</key>
+		<string>NineViewController</string>
+	</dict>
+	<dict>
+		<key>自定义(年和日期)</key>
+		<string>TenViewController</string>
+	</dict>
+	<dict>
+		<key>自定义(年和日期和星期)</key>
+		<string>ElevenViewController</string>
+	</dict>
+	<dict>
+		<key>自定义(年和日期和时间)</key>
+		<string>TwelveViewController</string>
+	</dict>
+	<dict>
+		<key>自定义(年和日期和时间和星期)</key>
+		<string>ThirteenvewController</string>
+	</dict>
+	<dict>
+		<key>自定义(年和日期和时间和星期12小时)</key>
+		<string>FifteenViewController</string>
+	</dict>
+</array>
+</plist>
