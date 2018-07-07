@@ -1,8 +1,10 @@
 # LYSDatePicker
 
-In development, I try to reduce the size of the file, just hope that the user does not pay attention to the specific implementation, but just use the provided API to achieve the desired effect, so put all the file classes into a class file, if you open Class .m file sees more than a thousand lines of code in the class, don't dizzy
+LYSDatePicker is mainly to adapt to the scenes that need to choose the date in daily development. The bottom layer is mainly implemented by UIPickerView and UIDatePicker components. Since this is just released, there may be bugs in the middle of use, so you need to ask for it, I will try to fix it.
 
 ![iOS技术群群二维码](https://github.com/LIYANGSHUAI/LYSDatePicker/blob/master/resource/iOS技术群群二维码.JPG)
+
+Here is the usage scenario I thought of as much as possible, as a reference
 
 ![效果图](https://github.com/LIYANGSHUAI/LYSDatePicker/blob/master/resource/目录.png)
 ![效果图](https://github.com/LIYANGSHUAI/LYSDatePicker/blob/master/resource/系统(时间).png)
