@@ -23,6 +23,8 @@ pod 'LYSDatePicker', '~> 0.0.1'
 
 直接粘贴: pod 'LYSDatePicker', '~> 0.0.1'
 
+当前最高版本0.0.2
+
 
 Here is the usage scenario I thought of as much as possible, as a reference
 
