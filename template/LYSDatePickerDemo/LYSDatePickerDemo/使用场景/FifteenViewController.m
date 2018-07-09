@@ -23,7 +23,7 @@
     pickerView.weekDayType = LYSDatePickerWeekDayTypeWeekdaySymbols;
     pickerView.hourStandard = LYSDatePickerStandard12Hour;
     pickerView.date = [NSDate date];
-    
+    pickerView.labelFont = [UIFont systemFontOfSize:14];
     LYSDateHeaderBarItem *cancelItem = [[LYSDateHeaderBarItem alloc] initWithTitle:@"取消" target:self action:@selector(cancelAction:)];
     
     cancelItem.tintColor = [UIColor whiteColor];

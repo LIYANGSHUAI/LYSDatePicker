@@ -83,14 +83,13 @@ LYSPickerDate transformFromDate(NSDate *date)
     return lysDate;
 }
 
-
 /**
  Convert an LYSPickerDate object to a NSDate type
  
  @param date NSDate
  @return LYSPickerDate
  */
-NSDate * transformFromComponents(LYSPickerDate date)
+NSDate * transformFromPickerDate(LYSPickerDate date)
 {
     NSDateComponents *components = [[NSCalendar currentCalendar] components:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute fromDate:[NSDate date]];
     [components setYear:date.year];
@@ -117,10 +116,6 @@ NSInteger weekDayOfFirstDate(LYSPickerDate date)
     [components setDay:1];
     NSDate *firstDate = [[NSCalendar currentCalendar] dateFromComponents:components];
     NSInteger index = [[NSCalendar currentCalendar] component:(NSCalendarUnitWeekday) fromDate:firstDate];
-    //    index = index - 1;
-    //    if (index == 0) {
-    //        index = 7;
-    //    }
     return index;
 }
 
@@ -254,6 +249,7 @@ BOOL judgeLongMonth(LYSPickerDate date)
     }
     return NO;  /// February
 }
+
 /*
  Determine the type of a month
  */
@@ -303,7 +299,6 @@ NSLog(@">>>>>>>\nWARN:%@\n>>>>>>>",B);\
 #define MatchHourStandard(A,B)      {if (self.hourStandard == (LYSDatePickerStandard##A)) B}
 #define MatchWeekDayType(A,B)       {if (self.weekDayType == (LYSDatePickerWeekDayType##A)) B}
 
-
 NSString *const LYSDatePickerDidSelectDateNotifition = @"LYSDatePickerDidSelectDateNotifition";
 
 @interface LYSDatePicker ()<UIPickerViewDelegate,UIPickerViewDataSource>
@@ -324,9 +319,36 @@ NSString *const LYSDatePickerDidSelectDateNotifition = @"LYSDatePickerDidSelectD
     if (self) {
         self.type = type;
         [self defaultParms];
-        
     }
     return self;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame type:(LYSDatePickerType)type mode:(LYSDatePickerMode)mode
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        self.type = type;
+        self.datePickerMode = mode;
+        [self defaultParms];
+    }
+    return self;
+}
+
++ (instancetype)datePickerWithType:(LYSDatePickerType)type
+{
+    LYSDatePicker *datePicker = [[self alloc] init];
+    datePicker.type = type;
+    [datePicker defaultParms];
+    return datePicker;
+}
+
++ (instancetype)datePickerWithType:(LYSDatePickerType)type mode:(LYSDatePickerMode)mode
+{
+    LYSDatePicker *datePicker = [[self alloc] init];
+    datePicker.type = type;
+    datePicker.datePickerMode = mode;
+    [datePicker defaultParms];
+    return datePicker;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -393,6 +415,11 @@ NSString *const LYSDatePickerDidSelectDateNotifition = @"LYSDatePickerDidSelectD
 
 - (NSArray *)weekDayStrArr
 {
+    MatchWeekDayType(Custom, {
+        NSAssert((self.weekDayArr && [self.weekDayArr count] == 7), @"Because the date type you set is LYSDatePickerWeekDayTypeCustom, the weekDayArr parameter must be set, and the number of elements can only be 7");
+        return self.weekDayArr;
+    })
+    
     NSArray *weekDayStrArr = @[@"星期日",@"星期一",@"星期二",@"星期三",@"星期四",@"星期五",@"星期六"];
     NSArray *shortWeekdaySymbols = @[@"周日",@"周一",@"周二",@"周三",@"周四",@"周五",@"周六"];
     NSArray *veryShortWeekdaySymbols = @[@"日",@"一",@"二",@"三",@"四",@"五",@"六"];
@@ -424,7 +451,6 @@ NSString *const LYSDatePickerDidSelectDateNotifition = @"LYSDatePickerDidSelectD
         Layout(self.headerView,  Top,     Equal,  self,   Top,             1.0f, 0).active = YES;
         Layout(self.headerView,  Right,   Equal,  self,   Right,           1.0f, 0).active = YES;
         Layout(self.headerView,  Height,  Equal,  nil,    NotAnAttribute,  1.0f, self.headerHeight).active = YES;
-        
         [self layoutIfNeeded];
     }
 }
@@ -443,13 +469,12 @@ NSString *const LYSDatePickerDidSelectDateNotifition = @"LYSDatePickerDidSelectD
     self.datePicker.translatesAutoresizingMaskIntoConstraints = NO;
     
     CGFloat height = Crossroads(self.enableShowHeader, self.headerHeight, 0);
-    
     Layout(self.datePicker, Top,    Equal, self,  Top,            1.0f, height).active = YES;
     Layout(self.datePicker, Left,   Equal, self,  Left,           1.0f, 0).active = YES;
     Layout(self.datePicker, Right,  Equal, self,  Right,          1.0f, 0).active = YES;
     Layout(self.datePicker, Bottom, Equal, self,  Bottom,         1.0f, 0).active = YES;
     [self layoutIfNeeded];
-
+    
     [self.datePicker addTarget:self action:@selector(changeDate:) forControlEvents:(UIControlEventValueChanged)];
 }
 
@@ -471,7 +496,6 @@ NSString *const LYSDatePickerDidSelectDateNotifition = @"LYSDatePickerDidSelectD
     self.pickerView.translatesAutoresizingMaskIntoConstraints = NO;
     
     CGFloat height = Crossroads(self.enableShowHeader, self.headerHeight, 0);
-    
     Layout(self.pickerView, Top,    Equal, self,  Top,            1.0f, height).active = YES;
     Layout(self.pickerView, Left,   Equal, self,  Left,           1.0f, 0).active = YES;
     Layout(self.pickerView, Right,  Equal, self,  Right,          1.0f, 0).active = YES;
@@ -479,19 +503,13 @@ NSString *const LYSDatePickerDidSelectDateNotifition = @"LYSDatePickerDidSelectD
     [self layoutIfNeeded];
     
     self.currentDate = transformFromDate(self.date);
-    
     [self selectDate:self.currentDate];
 }
 
 - (void)updateDate:(NSDate *)date
 {
-    MatchType(System, {
-        self.datePicker.date = date;
-    })
-    MatchType(Custom, {
-        self.currentDate = transformFromDate(self.date);
-        [self selectDate:self.currentDate];
-    })
+    MatchType(System, {self.datePicker.date = date;})
+    MatchType(Custom, {self.currentDate = transformFromDate(self.date);[self selectDate:self.currentDate];})
 }
 
 - (void)selectDate:(LYSPickerDate)date
@@ -609,6 +627,7 @@ NSString *const LYSDatePickerDidSelectDateNotifition = @"LYSDatePickerDidSelectD
     }
     label.textColor = self.labelColor;
     label.font = self.labelFont;
+//    label.backgroundColor = [UIColor redColor];
     label.text = [self pickerView:pickerView titleForRow:row forComponent:component];
     return label;
 }
@@ -743,10 +762,12 @@ NSString *const LYSDatePickerDidSelectDateNotifition = @"LYSDatePickerDidSelectD
         Match(component == 5,                   {self.currentDate = updateTimeType(self.currentDate, timeTypeIndex);})
     })
     
+    /// Monitor leap year
     [self monitorCurrentDate];
     
-    NSDate *date = transformFromComponents(self.currentDate);
+    NSDate *date = transformFromPickerDate(self.currentDate);
     
+    /// Compare dates, limit dates between maximum and minimum dates
     [self compareDate:date];
     
     if (self.dataSource && [self.dataSource respondsToSelector:@selector(datePicker:didSelectDate:)]) {
@@ -759,9 +780,7 @@ NSString *const LYSDatePickerDidSelectDateNotifition = @"LYSDatePickerDidSelectD
 {
     Match(self.minimumDate, {
         NSComparisonResult miniResult = [[NSCalendar currentCalendar] compareDate:self.minimumDate toDate:date toUnitGranularity:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute];
-        
         if (miniResult == NSOrderedDescending) {
-            
             self.currentDate = transformFromDate(self.minimumDate);
             [self selectDate:self.currentDate];
         }
@@ -777,15 +796,15 @@ NSString *const LYSDatePickerDidSelectDateNotifition = @"LYSDatePickerDidSelectD
 
 - (void)monitorCurrentDate
 {
-    MatchDatePickerMode(Time, {MatchHourStandard(12Hour, {[self judgeHourTypeWith:2];})})
-    MatchDatePickerMode(Date, {[self judgeMonthNumAndRefresh:1];})
+    MatchDatePickerMode(Time,                       {MatchHourStandard(12Hour, {[self judgeHourTypeWith:2];})})
+    MatchDatePickerMode(Date,                       {[self judgeMonthNumAndRefresh:1];})
     MatchDatePickerMode(DateAndTime, {
-        MatchHourStandard(12Hour, {[self judgeHourTypeWith:4];})
+        MatchHourStandard(12Hour,                   {[self judgeHourTypeWith:4];})
         [self judgeMonthNumAndRefresh:1];
     })
-    MatchDatePickerMode(YearAndDate, {[self judgeMonthNumAndRefresh:2];})
+    MatchDatePickerMode(YearAndDate,                {[self judgeMonthNumAndRefresh:2];})
     MatchDatePickerMode(YearAndDateAndTime, {
-        MatchHourStandard(12Hour, {[self judgeHourTypeWith:5];})
+        MatchHourStandard(12Hour,                   {[self judgeHourTypeWith:5];})
         [self judgeMonthNumAndRefresh:2];
     })
 }
@@ -804,10 +823,10 @@ NSString *const LYSDatePickerDidSelectDateNotifition = @"LYSDatePickerDidSelectD
 - (void)judgeMonthNumAndRefresh:(NSInteger)index
 {
     LYSMonthType monthType = judgeMonthType(self.currentDate);
-    Match(monthType == LYSMonthTypeGeneralLongMonth, self.dayNum = 31;);
-    Match(monthType == LYSMonthTypeGeneralShortMonth, self.dayNum = 30;);
-    Match(monthType == LYSMonthTypeLeapYearLongMonth, self.dayNum = 29;);
-    Match(monthType == LYSMonthTypeLeapYearShortMonth, self.dayNum = 28;);
+    Match(monthType == LYSMonthTypeGeneralLongMonth,                                            self.dayNum = 31;);
+    Match(monthType == LYSMonthTypeGeneralShortMonth,                                           self.dayNum = 30;);
+    Match(monthType == LYSMonthTypeLeapYearLongMonth,                                           self.dayNum = 29;);
+    Match(monthType == LYSMonthTypeLeapYearShortMonth,                                          self.dayNum = 28;);
     self.weekDayOfFirstDate = weekDayOfFirstDate(self.currentDate);
     [self.pickerView reloadComponent:index];
 }
@@ -821,34 +840,48 @@ NSString *const LYSDatePickerDidSelectDateNotifition = @"LYSDatePickerDidSelectD
     
     CGFloat fontSize = self.labelFont.pointSize;
     
+    CGFloat year = 50*fontSize/14;
+    CGFloat month = 35*fontSize/14;
+    CGFloat hour = 40*fontSize/14;
+    CGFloat minute = 40*fontSize/14;
+    CGFloat timeType = 30*fontSize/14;
+    
+    CGFloat day = 80*fontSize/14;
+    
+    MatchWeekDayType(None,                                  day = 60*fontSize/14;)
+    MatchWeekDayType(WeekdaySymbols,                        day = 80*fontSize/14;)
+    MatchWeekDayType(ShortWeekdaySymbols,                   day = 70*fontSize/14;)
+    MatchWeekDayType(VeryShortWeekdaySymbols,               day = 60*fontSize/14;)
+    MatchWeekDayType(Custom,                                day = 80*fontSize/14;)
+    
     MatchDatePickerMode(Time,                   {
-        Match(component == 0,                               {return 40*fontSize/14.0;})
-        Match(component == 1,                               {return 40*fontSize/14.0;})
-        Match(component == 2,                               {return 30*fontSize/14.0;})
+        Match(component == 0,                               {return hour;})
+        Match(component == 1,                               {return minute;})
+        Match(component == 2,                               {return timeType;})
     })
     MatchDatePickerMode(Date,                   {
-        Match(component == 0,                               {return 35*fontSize/14.0;})
-        Match(component == 1,                               {return 80*fontSize/14.0;})
+        Match(component == 0,                               {return month;})
+        Match(component == 1,                               {return day;})
     })
     MatchDatePickerMode(DateAndTime,            {
-        Match(component == 0,                               {return 35*fontSize/14.0;})
-        Match(component == 1,                               {return 80*fontSize/14.0;})
-        Match(component == 2,                               {return 40*fontSize/14.0;})
-        Match(component == 3,                               {return 40*fontSize/14.0;})
-        Match(component == 4,                               {return 30*fontSize/14.0;})
+        Match(component == 0,                               {return month;})
+        Match(component == 1,                               {return day;})
+        Match(component == 2,                               {return hour;})
+        Match(component == 3,                               {return minute;})
+        Match(component == 4,                               {return timeType;})
     })
     MatchDatePickerMode(YearAndDate,            {
-        Match(component == 0,                               {return 50*fontSize/14.0;})
-        Match(component == 1,                               {return 35*fontSize/14.0;})
-        Match(component == 2,                               {return 80*fontSize/14.0;})
+        Match(component == 0,                               {return year;})
+        Match(component == 1,                               {return month;})
+        Match(component == 2,                               {return day;})
     })
     MatchDatePickerMode(YearAndDateAndTime,     {
-        Match(component == 0,                               {return 50*fontSize/14.0;})
-        Match(component == 1,                               {return 35*fontSize/14.0;})
-        Match(component == 2,                               {return 80*fontSize/14.0;})
-        Match(component == 3,                               {return 40*fontSize/14.0;})
-        Match(component == 4,                               {return 40*fontSize/14.0;})
-        Match(component == 5,                               {return 30*fontSize/14.0;})
+        Match(component == 0,                               {return year;})
+        Match(component == 1,                               {return month;})
+        Match(component == 2,                               {return day;})
+        Match(component == 3,                               {return hour;})
+        Match(component == 4,                               {return minute;})
+        Match(component == 5,                               {return timeType;})
     })
     
     return 45;
@@ -862,7 +895,6 @@ NSString *const LYSDatePickerDidSelectDateNotifition = @"LYSDatePickerDidSelectD
 @end
 
 @implementation LYSDateHeaderBar
-
 @end
 
 typedef NS_ENUM(NSUInteger, LYSDateHeaderBarItemType) {
@@ -880,7 +912,8 @@ typedef NS_ENUM(NSUInteger, LYSDateHeaderBarItemType) {
 @end
 
 @implementation LYSDateHeaderBarItem
-- (instancetype)initWithTitle:(NSString *)title target:(id)target action:(SEL)action{
+- (instancetype)initWithTitle:(NSString *)title target:(id)target action:(SEL)action
+{
     if (self = [super init]) {
         self.type = LYSDateHeaderBarItemTypeTitle;
         self.title = title;
@@ -895,7 +928,8 @@ typedef NS_ENUM(NSUInteger, LYSDateHeaderBarItemType) {
     }
     return self;
 }
-- (instancetype)initWithImage:(UIImage *)image target:(id)target action:(SEL)action{
+- (instancetype)initWithImage:(UIImage *)image target:(id)target action:(SEL)action
+{
     if (self = [super init]) {
         self.type = LYSDateHeaderBarItemTypeImage;
         self.image = image;
@@ -917,13 +951,6 @@ typedef NS_ENUM(NSUInteger, LYSDateHeaderBarItemType) {
     return self;
 }
 - (void)action:(UIView *)sender {}
-@end
-
-@interface LYSDateHeadrView ()
-@property (nonatomic, strong) UIView *leftLastView;
-@property (nonatomic, strong) UIView *rightLastView;
-
-@property(nonatomic, assign) BOOL isHasItem;
 @end
 
 @implementation LYSDateHeadrView
@@ -968,7 +995,6 @@ typedef NS_ENUM(NSUInteger, LYSDateHeaderBarItemType) {
 - (void)setHeaderBar:(LYSDateHeaderBar *)headerBar
 {
     _headerBar = headerBar;
-    self.isHasItem = NO;
     NSArray *arr = [NSArray arrayWithArray:self.subviews];
     for (int i = 0; i < [arr count]; i++) {
         UIView *view = [arr objectAtIndex:i];
@@ -995,7 +1021,6 @@ typedef NS_ENUM(NSUInteger, LYSDateHeaderBarItemType) {
         Match(_headerBar.rightBarItem,                                                                      {[self createRightSingleItem];})
         Match(_headerBar.rightBarItems && [_headerBar.rightBarItems count],                                 {[self createRightMoreItem];})
     }
-    
 }
 
 - (void)createTitle
@@ -1030,7 +1055,6 @@ typedef NS_ENUM(NSUInteger, LYSDateHeaderBarItemType) {
     Layout(itemView, Bottom, Equal, self, Bottom, 1.0f, 0).active = YES;
     UIView *subView = [[itemView subviews] objectAtIndex:0];
     Layout(itemView, Width, Equal, subView, Width, 1.0f, 10).active = YES;
-    self.leftLastView = itemView;
 }
 
 - (void)createLeftMoreItem
@@ -1051,7 +1075,6 @@ typedef NS_ENUM(NSUInteger, LYSDateHeaderBarItemType) {
             Layout(itemView, Left, Equal, leftView, Right, 1.0f, 5).active = YES;
         }
         leftView = itemView;
-        self.leftLastView = itemView;
     }
 }
 
@@ -1065,7 +1088,6 @@ typedef NS_ENUM(NSUInteger, LYSDateHeaderBarItemType) {
     Layout(itemView, Bottom, Equal, self, Bottom, 1.0f, 0).active = YES;
     UIView *subView = [[itemView subviews] objectAtIndex:0];
     Layout(itemView, Width, Equal, subView, Width, 1.0f, 10).active = YES;
-    self.rightLastView = itemView;
 }
 
 - (void)createRightMoreItem
@@ -1086,7 +1108,6 @@ typedef NS_ENUM(NSUInteger, LYSDateHeaderBarItemType) {
             Layout(itemView, Right, Equal, rightView, Left, 1.0f, -5).active = YES;
         }
         rightView = itemView;
-        self.rightLastView = itemView;
     }
 }
 
@@ -1136,9 +1157,6 @@ typedef NS_ENUM(NSUInteger, LYSDateHeaderBarItemType) {
 {
     LYSDateHeaderBarItem *item = objc_getAssociatedObject(sender.view, @"item");
     [item.invocation invoke];
-}
-- (void)dealloc{
-    
 }
 @end
 

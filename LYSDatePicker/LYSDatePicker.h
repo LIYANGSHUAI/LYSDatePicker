@@ -46,6 +46,7 @@ typedef NS_ENUM(NSUInteger, LYSDatePickerWeekDayType) {
     LYSDatePickerWeekDayTypeWeekdaySymbols,                             // 星期日,星期一,星期二,星期三,星期四,星期五,星期六
     LYSDatePickerWeekDayTypeShortWeekdaySymbols,                        // 周日,周一,周二,周三,周四,周五,周六
     LYSDatePickerWeekDayTypeVeryShortWeekdaySymbols,                    // 日,一,二,三,四,五,六
+    LYSDatePickerWeekDayTypeCustom                                      // weekDayArr not is empty
 };
 
 extern NSString *const LYSDatePickerDidSelectDateNotifition;
@@ -78,7 +79,7 @@ extern NSString *const LYSDatePickerDidSelectDateNotifition;
 /// Whether to show the top status bar, the default is YES
 @property (nonatomic, assign) BOOL enableShowHeader;
 /// Status bar view, can not be set to empty, if you want to not display the status bar, you can operate the enableShowHeader property
-@property (nonnull, nonatomic, strong) LYSDateHeadrView *headerView;
+@property (nonatomic, strong) LYSDateHeadrView *headerView;
 /// Height of the status bar
 @property (nonatomic, assign) CGFloat headerHeight;
 /// contentColor color
@@ -88,6 +89,8 @@ extern NSString *const LYSDatePickerDidSelectDateNotifition;
 @property (nonatomic, assign) LYSDatePickerMode datePickerMode;
 @property (nonatomic, assign) LYSDatePickerWeekDayType weekDayType;
 @property (nonatomic, assign) LYSDatePickerStandard hourStandard;
+
+@property (nonatomic,strong) NSArray<NSString *> *weekDayArr;
 
 @property (nonnull, nonatomic, strong) NSString *AMStr;
 @property (nonnull, nonatomic, strong) NSString *PMStr;
@@ -120,6 +123,10 @@ extern NSString *const LYSDatePickerDidSelectDateNotifition;
 
 /// Date selector initialization method
 - (instancetype)initWithFrame:(CGRect)frame type:(LYSDatePickerType)type;
+- (instancetype)initWithFrame:(CGRect)frame type:(LYSDatePickerType)type mode:(LYSDatePickerMode)mode;
+
++ (instancetype)datePickerWithType:(LYSDatePickerType)type;
++ (instancetype)datePickerWithType:(LYSDatePickerType)type mode:(LYSDatePickerMode)mode;
 @end
 
 /*

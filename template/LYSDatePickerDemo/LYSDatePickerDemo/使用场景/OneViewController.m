@@ -28,7 +28,7 @@
     [self.view addSubview:pickerView];
     
 }
-\
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.

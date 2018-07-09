@@ -20,9 +20,9 @@
     
     LYSDatePicker *pickerView = [[LYSDatePicker alloc] initWithFrame:CGRectMake(0, 100, CGRectGetWidth(self.view.frame), 256) type:(LYSDatePickerTypeCustom)];
     pickerView.datePickerMode = LYSDatePickerModeDate;
-    pickerView.weekDayType = LYSDatePickerWeekDayTypeWeekdaySymbols;
+    pickerView.weekDayType = LYSDatePickerWeekDayTypeCustom;
     pickerView.date = [NSDate date];
-    
+    pickerView.weekDayArr = @[@"日",@"一",@"二",@"三",@"四",@"五",@"六"];
     UISegmentedControl *control = [[UISegmentedControl alloc] initWithItems:@[@"开始时间",@"结束时间"]];
     control.frame = CGRectMake(0, 0, 100, 30);
     control.tintColor = [UIColor whiteColor];
