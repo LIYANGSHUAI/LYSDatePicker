@@ -88,7 +88,7 @@ pickerView.dataSource = self;
 [self.view addSubview:pickerView];
 ```
 
-大题的使用方法如上所示,大家可以通过下面的四个枚举值进行不同场景适配
+大体的使用方法如上所示,大家可以通过下面的四个枚举值进行不同场景适配
 
 ```objc
 @property (nonatomic, assign) LYSDatePickerType type;
@@ -169,5 +169,9 @@ Match(component == 5,                               {return timeType;})
 return 45;
 }
 ```
-我是在iPhone 5s 4.0手机屏幕下测试的,因此我用14号的字体作为参考
+我是在iPhone 5s 4.0手机屏幕下测试的,我用14号的字体作为参考
+
+![2](https://github.com/LIYANGSHUAI/LYSDatePicker/blob/master/resource/2.png)
+![1](https://github.com/LIYANGSHUAI/LYSDatePicker/blob/master/resource/1.png)
+
 
