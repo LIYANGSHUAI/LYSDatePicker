@@ -1141,7 +1141,6 @@ typedef NS_ENUM(NSUInteger, LYSDateHeaderBarItemType) {
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clickAction:)];
         [contentView addGestureRecognizer:tap];
     })
-    
     Match(item.type == LYSDateHeaderBarItemTypeCustom, {
         [contentView addSubview:item.customView];
         item.customView.translatesAutoresizingMaskIntoConstraints = NO;
