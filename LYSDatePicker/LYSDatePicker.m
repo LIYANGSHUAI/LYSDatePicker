@@ -770,6 +770,7 @@ NSString *const LYSDatePickerDidSelectDateNotifition = @"LYSDatePickerDidSelectD
     /// Compare dates, limit dates between maximum and minimum dates
     [self compareDate:date];
     
+    self.date = date;
     if (self.dataSource && [self.dataSource respondsToSelector:@selector(datePicker:didSelectDate:)]) {
         [self.dataSource datePicker:self didSelectDate:date];
     }

@@ -51,6 +51,7 @@
 
 - (void)datePicker:(LYSDatePicker *)pickerView didSelectDate:(NSDate *)date
 {
+    NSLog(@"%@",pickerView.date);
     NSLog(@"%@",date);
 }
 
