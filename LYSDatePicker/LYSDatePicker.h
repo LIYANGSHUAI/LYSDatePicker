@@ -70,7 +70,7 @@ extern NSString * _Nullable const LYSDatePickerDidSelectDateNotifition;
 /// 是否显示顶部工具栏,默认是显示
 @property (nonatomic, assign) BOOL enableShowHeader;
 /// 顶部工具栏
-@property (nonatomic, strong) LYSDateHeadrView * _Nonnull headerView;
+@property (nonatomic, strong) LYSDateHeadrView * _Nullable headerView;
 /// 顶部工具类高度
 @property (nonatomic, assign) CGFloat headerHeight;
 /// 内容背景色
@@ -96,7 +96,7 @@ extern NSString * _Nullable const LYSDatePickerDidSelectDateNotifition;
 /// 最小时间
 @property (nonatomic, strong) NSDate * _Nullable minimumDate;
 ///最大时间
-@property (nonatomic, strong) NSDate * _Nonnull maximumDate;
+@property (nonatomic, strong) NSDate * _Nullable maximumDate;
 
 /// 行高
 @property (nonatomic,assign) CGFloat rowHeight;
@@ -109,7 +109,7 @@ extern NSString * _Nullable const LYSDatePickerDidSelectDateNotifition;
 /// 字体
 @property (nonatomic,strong) UIFont * _Nullable labelFont;
 /// 颜色
-@property (nonatomic,strong) UIColor * _Nonnull labelColor;
+@property (nonatomic,strong) UIColor * _Nullable labelColor;
 
 
 /// 更新显示日期
@@ -129,25 +129,25 @@ extern NSString * _Nullable const LYSDatePickerDidSelectDateNotifition;
 
 @interface LYSDateHeadrView : UIView
 /// 工具类
-@property (nonatomic, strong) LYSDateHeaderBar * _Nonnull headerBar;
+@property (nonatomic, strong) LYSDateHeaderBar * _Nullable headerBar;
 /// 背景颜色
-@property (nonatomic, strong) NSString * _Nonnull backgroundHexColor;
+@property (nonatomic, strong) NSString * _Nullable backgroundHexColor;
 @end
 
 @interface LYSDateHeaderBar : NSObject
 
 /// 左边按钮类
-@property (nonatomic, strong) LYSDateHeaderBarItem * _Nonnull leftBarItem;
+@property (nonatomic, strong) LYSDateHeaderBarItem * _Nullable leftBarItem;
 /// 右边按钮类
 @property (nonatomic, strong) LYSDateHeaderBarItem * _Nullable rightBarItem;
 
 /// 左边按钮数组
-@property (nonatomic, strong) NSArray<LYSDateHeaderBarItem *> * _Nonnull leftBarItems;
+@property (nonatomic, strong) NSArray<LYSDateHeaderBarItem *> * _Nullable leftBarItems;
 /// 右边按钮数组
-@property (nonatomic, strong) NSArray<LYSDateHeaderBarItem *> * _Nonnull rightBarItems;
+@property (nonatomic, strong) NSArray<LYSDateHeaderBarItem *> * _Nullable rightBarItems;
 
 /// 标题
-@property (nonatomic, copy) NSString * _Nonnull title;
+@property (nonatomic, copy) NSString * _Nullable title;
 @property (nonatomic, strong) UIColor * _Nullable titleColor;
 @property (nonatomic, strong) UIFont * _Nullable titleFont;
 @property (nonatomic, strong) UIView * _Nullable titleView;
