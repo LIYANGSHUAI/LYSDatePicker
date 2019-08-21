@@ -1,9 +1,9 @@
 Pod::Spec.new do |s|
 s.name         = "LYSDatePicker"
-s.version      = "0.0.4"
-s.summary      = "LYSDatePicker,I hope everyone will give me some advice during the process of use. I want to go further."
+s.version      = "0.0.5"
+s.summary      = "简单封装一个日期选择器"
 s.description  = <<-DESC
-LYSDatePicker is mainly to adapt to the scenes that need to choose the date in daily development. The bottom layer is mainly implemented by UIPickerView and UIDatePicker components. Since this is just released, there may be bugs in the middle of use, so you need to ask for it, I will try to fix it.
+简单封装一个日期选择器,简单封装一个日期选择器,简单封装一个日期选择器.
 DESC
 s.homepage     = "https://github.com/LIYANGSHUAI/LYSDatePicker"
 

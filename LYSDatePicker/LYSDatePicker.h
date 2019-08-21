@@ -8,176 +8,168 @@
 
 #import <UIKit/UIKit.h>
 
-/*
- In development, I try to reduce the size of the file, just hope that the user does not pay attention to the specific implementation, but just use the provided API to achieve the desired effect, so put all the file classes into a class file, if you open Class .m file sees more than a thousand lines of code in the class, don't dizzy
- 
- LYSDatePickerView is mainly implemented using the system's UIDatePicker and UIPickerView controls. It provides two ways for users to choose. If you need to use a similar system date selector, then you can set the parameter @property (nonatomic, assign) LYSDatePickerType type; LYSDatePickerTypeSystem This type just encapsulates the basic functions of UIDatePicker, without adding additional features. If you need a more complicated date picker then you can choose LYSDatePickerTypeCustom, which adds a lot of additional features, of course there may be bugs in the middle, welcome to ask
- */
 typedef NS_ENUM(NSUInteger, LYSDatePickerType) {
-    LYSDatePickerTypeCustom,                            // Date component is selected UIPickerView
-    LYSDatePickerTypeSystem                             // Date component is selected UIDatePicker
+    LYSDatePickerTypeCustom,                            // 使用 UIPickerView 组件实现
+    LYSDatePickerTypeSystem                             // 使用系统 UIDatePicker 组件实现
 };
-/*
- The packaged date selector provides five combinations of classes. LYSDatePickerModeTime, LYSDatePickerModeDate, LYSDatePickerModeDateAndTime are applicable to LYSDatePickerTypeCustom, LYSDatePickerTypeSystem two types LYSDatePickerModeYearAndDate, LYSDatePickerModeYearAndDateAndTime are only applicable to LYSDatePickerTypeCustom type, so please add more when using Pay attention to avoid unexpected problems
- 
- This parameter is mandatory.
- */
+
 typedef NS_ENUM(NSInteger, LYSDatePickerMode) {
-    LYSDatePickerModeTime,                      // Only show time                LYSDatePickerTypeCustom | LYSDatePickerTypeSystem
-    LYSDatePickerModeDate,                      // Show only date                LYSDatePickerTypeCustom | LYSDatePickerTypeSystem
-    LYSDatePickerModeDateAndTime,               // Show date and time            LYSDatePickerTypeCustom | LYSDatePickerTypeSystem
-    LYSDatePickerModeYearAndDate,               // Show year and date            LYSDatePickerTypeCustom
-    LYSDatePickerModeYearAndDateAndTime         // Show year and date and time   LYSDatePickerTypeCustom
+    LYSDatePickerModeTime,                      // 只显示时间             使用范围: LYSDatePickerTypeCustom | LYSDatePickerTypeSystem
+    LYSDatePickerModeDate,                      // 只显示日期             使用范围: LYSDatePickerTypeCustom | LYSDatePickerTypeSystem
+    LYSDatePickerModeDateAndTime,               // 显示日期和时间          使用范围: LYSDatePickerTypeCustom | LYSDatePickerTypeSystem
+    LYSDatePickerModeYearAndDate,               // 显示年和日期            使用范围: LYSDatePickerTypeCustom
+    LYSDatePickerModeYearAndDateAndTime         // 显示年和日期和时间       使用范围: LYSDatePickerTypeCustom
 };
 /*
- Since the hour can be divided into 12-digit and 24-digit. The following parameters are provided for the function if there is such a requirement. The default is 24 hours.
+ 时间显示,12小时制,24小时制,默认是24小时制
  */
 
 typedef NS_ENUM(NSUInteger, LYSDatePickerStandard) {
-    LYSDatePickerStandard12Hour,                                        // 12-digit
-    LYSDatePickerStandard24Hour,                                        // 24-digit
+    LYSDatePickerStandard12Hour,                                        // 12小时
+    LYSDatePickerStandard24Hour,                                        // 24小时
     LYSDatePickerStandardDefault = LYSDatePickerStandard24Hour
 };
 /*
- When you need a date selector on your needs to display more detailed information every day, such as the week, this feature can help you, the default is not to display
+ 星期选择类型
  */
 typedef NS_ENUM(NSUInteger, LYSDatePickerWeekDayType) {
-    LYSDatePickerWeekDayTypeNone,                                       // NotDisplay
+    LYSDatePickerWeekDayTypeNone,                                       // 不显示星期
     LYSDatePickerWeekDayTypeWeekdaySymbols,                             // 星期日,星期一,星期二,星期三,星期四,星期五,星期六
     LYSDatePickerWeekDayTypeShortWeekdaySymbols,                        // 周日,周一,周二,周三,周四,周五,周六
     LYSDatePickerWeekDayTypeVeryShortWeekdaySymbols,                    // 日,一,二,三,四,五,六
-    LYSDatePickerWeekDayTypeCustom                                      // weekDayArr not is empty
+    LYSDatePickerWeekDayTypeCustom                                      // 如果设置为这个属性,那么weekDayArr属性不能是空的,必须设置,否则报错
 };
 
-extern NSString *const LYSDatePickerDidSelectDateNotifition;
+extern NSString * _Nullable const LYSDatePickerDidSelectDateNotifition;
 
 @class LYSDatePicker;
 @class LYSDateHeaderBarItem,LYSDateHeaderBar,LYSDateHeadrView;
 
-/// The data of the date selector can be obtained by following the class of the LYSDatePickerViewDataSource protocol.
 @protocol LYSDatePickerDataSource<NSObject>
 
 @optional
-- (void)datePicker:(LYSDatePicker *)pickerView didSelectDate:(NSDate *)date;
+// 组件滚动结束后触发这个代理方法,返回选择日期
+- (void)datePicker:(LYSDatePicker *_Nullable)pickerView didSelectDate:(NSDate *_Nullable)date;
 @end
 
-/// Follow the LYSDatePickerViewDelegate protocol to control the layout of higher date selectors
 @protocol LYSDatePickerDelegate<NSObject>
 
 @optional
-- (CGFloat)datePicker:(LYSDatePicker *)pickerView componentWidthOfIndex:(NSInteger)index;
+// 设置某一列宽度
+- (CGFloat)datePicker:(LYSDatePicker *_Nullable)pickerView componentWidthOfIndex:(NSInteger)index;
 
 @end
 
 @interface LYSDatePicker : UIView
 
-/// Data protocol
-@property (nonatomic, assign) id<LYSDatePickerDataSource> dataSource;
-/// Layout agreement
-@property (nonatomic, assign) id<LYSDatePickerDelegate> delegate;
+/// 数据源代理
+@property (nonatomic, assign) id<LYSDatePickerDataSource> _Nullable dataSource;
+/// 操作代理
+@property (nonatomic, assign) id<LYSDatePickerDelegate> _Nullable delegate;
 
-/// Whether to show the top status bar, the default is YES
+/// 是否显示顶部工具栏,默认是显示
 @property (nonatomic, assign) BOOL enableShowHeader;
-/// Status bar view, can not be set to empty, if you want to not display the status bar, you can operate the enableShowHeader property
-@property (nonatomic, strong) LYSDateHeadrView *headerView;
-/// Height of the status bar
+/// 顶部工具栏
+@property (nonatomic, strong) LYSDateHeadrView * _Nonnull headerView;
+/// 顶部工具类高度
 @property (nonatomic, assign) CGFloat headerHeight;
-/// contentColor color
-@property (nonatomic, strong) UIColor *contentColor;
+/// 内容背景色
+@property (nonatomic, strong) UIColor * _Nullable contentColor;
 
 @property (nonatomic, assign) LYSDatePickerType type;
 @property (nonatomic, assign) LYSDatePickerMode datePickerMode;
 @property (nonatomic, assign) LYSDatePickerWeekDayType weekDayType;
 @property (nonatomic, assign) LYSDatePickerStandard hourStandard;
 
-@property (nonatomic,strong) NSArray<NSString *> *weekDayArr;
+/// 日期显示字符串,和LYSDatePickerWeekDayTypeCustom配合使用
+@property (nonatomic,strong) NSArray<NSString *> * _Nullable weekDayArr;
 
+/// 上下午显示字符串
 @property (nonnull, nonatomic, strong) NSString *AMStr;
 @property (nonnull, nonatomic, strong) NSString *PMStr;
 
-/// Whether to display the unit
+/// 是否显示上下午
 @property (nonatomic,assign) BOOL allowShowUnit;
 
-/// Date picker's initial date
+/// 初始化日期
 @property (nonnull, nonatomic, strong) NSDate *date;
-/// Minimum deadline for date picker
-@property (nonatomic, strong) NSDate *minimumDate;
-/// Date deadline for date picker
-@property (nonatomic, strong) NSDate *maximumDate;
+/// 最小时间
+@property (nonatomic, strong) NSDate * _Nullable minimumDate;
+///最大时间
+@property (nonatomic, strong) NSDate * _Nonnull maximumDate;
 
-/// Line height of the date picker
+/// 行高
 @property (nonatomic,assign) CGFloat rowHeight;
 
-/// The start year of the date picker
+/// 从哪一年开始
 @property (nonatomic,assign) NSInteger fromYear;
-/// End year of the date picker
+/// 从哪一年结束
 @property (nonatomic,assign) NSInteger toYear;
 
-/// Date selector font and font color
-@property (nonatomic,strong) UIFont *labelFont;
-@property (nonatomic,strong) UIColor *labelColor;
+/// 字体
+@property (nonatomic,strong) UIFont * _Nullable labelFont;
+/// 颜色
+@property (nonatomic,strong) UIColor * _Nonnull labelColor;
 
 
-/// update the Date
-- (void)updateDate:(NSDate *)date;
+/// 更新显示日期
+- (void)updateDate:(NSDate *_Nullable)date;
 
-/// Date selector initialization method
-- (instancetype)initWithFrame:(CGRect)frame type:(LYSDatePickerType)type;
-- (instancetype)initWithFrame:(CGRect)frame type:(LYSDatePickerType)type mode:(LYSDatePickerMode)mode;
+/// 初始化方法
+- (instancetype _Nullable )initWithFrame:(CGRect)frame type:(LYSDatePickerType)type;
+- (instancetype _Nullable )initWithFrame:(CGRect)frame type:(LYSDatePickerType)type mode:(LYSDatePickerMode)mode;
 
-+ (instancetype)datePickerWithType:(LYSDatePickerType)type;
-+ (instancetype)datePickerWithType:(LYSDatePickerType)type mode:(LYSDatePickerMode)mode;
++ (instancetype _Nullable )datePickerWithType:(LYSDatePickerType)type;
++ (instancetype _Nonnull )datePickerWithType:(LYSDatePickerType)type mode:(LYSDatePickerMode)mode;
 @end
 
 /*
- Date picker status bar view class. If you need to implement a component different from this function, you can inherit this class and operate in its subclass
+ 工具栏
  */
 
 @interface LYSDateHeadrView : UIView
-/// Date picker status bar button carrier
-@property (nonatomic, strong) LYSDateHeaderBar *headerBar;
-/// Date picker status bar background color, is a hex string, such as #dddddd
-@property (nonatomic, strong) NSString *backgroundHexColor;
+/// 工具类
+@property (nonatomic, strong) LYSDateHeaderBar * _Nonnull headerBar;
+/// 背景颜色
+@property (nonatomic, strong) NSString * _Nonnull backgroundHexColor;
 @end
 
 @interface LYSDateHeaderBar : NSObject
 
-/// Left button class
-@property (nonatomic, strong) LYSDateHeaderBarItem *leftBarItem;
-/// Right button class
-@property (nonatomic, strong) LYSDateHeaderBarItem *rightBarItem;
+/// 左边按钮类
+@property (nonatomic, strong) LYSDateHeaderBarItem * _Nonnull leftBarItem;
+/// 右边按钮类
+@property (nonatomic, strong) LYSDateHeaderBarItem * _Nullable rightBarItem;
 
-/// Left button collection class
-@property (nonatomic, strong) NSArray<LYSDateHeaderBarItem *> *leftBarItems;
-/// Right button collection class
-@property (nonatomic, strong) NSArray<LYSDateHeaderBarItem *> *rightBarItems;
+/// 左边按钮数组
+@property (nonatomic, strong) NSArray<LYSDateHeaderBarItem *> * _Nonnull leftBarItems;
+/// 右边按钮数组
+@property (nonatomic, strong) NSArray<LYSDateHeaderBarItem *> * _Nonnull rightBarItems;
 
-/// title
-@property (nonatomic, copy) NSString *title;
-@property (nonatomic, strong) UIColor *titleColor;
-@property (nonatomic, strong) UIFont *titleFont;
-@property (nonatomic, strong) UIView *titleView;
+/// 标题
+@property (nonatomic, copy) NSString * _Nonnull title;
+@property (nonatomic, strong) UIColor * _Nullable titleColor;
+@property (nonatomic, strong) UIFont * _Nullable titleFont;
+@property (nonatomic, strong) UIView * _Nullable titleView;
 @end
 
 @interface LYSDateHeaderBarItem : NSObject
-/// title
-@property(nonatomic, copy, readonly) NSString *title;
-/// image
-@property(nonatomic, strong, readonly) UIImage *image;
-/// Custom view
-@property(nonatomic, strong, readonly) UIView *customView;
+/// 标题
+@property(nonatomic, copy, readonly) NSString * _Nullable title;
+/// 图片
+@property(nonatomic, strong, readonly) UIImage * _Nullable image;
+/// 自定义视图
+@property(nonatomic, strong, readonly) UIView * _Nullable customView;
 
-/// Content color
-@property(nonatomic, strong) UIColor *tintColor;
-/// Content font
-@property(nonatomic, strong) UIFont *font;
+/// 显示颜色
+@property(nonatomic, strong) UIColor * _Nullable tintColor;
+/// 显示字体
+@property(nonatomic, strong) UIFont * _Nullable font;
 
-/// Create a title button
-- (instancetype)initWithTitle:(NSString *)title target:(id)target action:(SEL)action;
-/// Create a picture button
-- (instancetype)initWithImage:(UIImage *)image target:(id)target action:(SEL)action;
-/// Create a custom view button
-- (instancetype)initWithCustomView:(UIView *)customView;
+/// 初始化方法
+- (instancetype _Nullable )initWithTitle:(NSString *_Nullable)title target:(id _Nullable )target action:(SEL _Nullable )action;
+- (instancetype _Nullable )initWithImage:(UIImage *_Nullable)image target:(id _Nullable )target action:(SEL _Nullable )action;
+- (instancetype _Nullable )initWithCustomView:(UIView *_Nullable)customView;
 @end
 
 @interface LYSDateHeaderBarContent : UIView
