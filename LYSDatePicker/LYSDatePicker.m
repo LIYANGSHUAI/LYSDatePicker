@@ -771,31 +771,35 @@ NSString *const LYSDatePickerDidSelectDateNotifition = @"LYSDatePickerDidSelectD
     NSDate *date = transformFromPickerDate(self.currentDate);
     
     /// Compare dates, limit dates between maximum and minimum dates
-    [self compareDate:date];
+    NSDate *afterCompareDate = [self compareDate:date];
     
-    self.date = date;
+    self.date = afterCompareDate;
     if (self.dataSource && [self.dataSource respondsToSelector:@selector(datePicker:didSelectDate:)]) {
-        [self.dataSource datePicker:self didSelectDate:date];
+        [self.dataSource datePicker:self didSelectDate:afterCompareDate];
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:LYSDatePickerDidSelectDateNotifition object:nil userInfo:@{@"value":date}];
 }
 
-- (void)compareDate:(NSDate *)date
+- (NSDate *)compareDate:(NSDate *)date
 {
     Match(self.minimumDate, {
-        NSComparisonResult miniResult = [[NSCalendar currentCalendar] compareDate:self.minimumDate toDate:date toUnitGranularity:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute];
+        NSComparisonResult miniResult = [[NSCalendar currentCalendar] compareDate:self.minimumDate toDate:date toUnitGranularity:NSCalendarUnitMinute];
         if (miniResult == NSOrderedDescending) {
             self.currentDate = transformFromDate(self.minimumDate);
             [self selectDate:self.currentDate];
+            return self.minimumDate;
         }
     })
     Match(self.maximumDate, {
-        NSComparisonResult maxResult = [[NSCalendar currentCalendar] compareDate:self.maximumDate toDate:date toUnitGranularity:NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute];
+        NSComparisonResult maxResult = [[NSCalendar currentCalendar] compareDate:self.maximumDate toDate:date toUnitGranularity:NSCalendarUnitMinute];
         if (maxResult == NSOrderedAscending) {
             self.currentDate = transformFromDate(self.maximumDate);
             [self selectDate:self.currentDate];
+            return self.maximumDate;
         }
     })
+    
+    return date;
 }
 
 - (void)monitorCurrentDate
