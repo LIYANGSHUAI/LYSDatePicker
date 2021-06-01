@@ -508,8 +508,11 @@ NSString *const LYSDatePickerDidSelectDateNotifition = @"LYSDatePickerDidSelectD
 
 - (void)updateDate:(NSDate *)date
 {
+    WARN(date == nil, @"The date passed in cannot be empty, and the corresponding conversion is made here. If the incoming date is empty, the current date is selected by default.\n Update the value of this property to remove this warning @property (nonnull, nonatomic, strong) NSDate *date;")
+    Match(date == nil, date = [NSDate date];)
+    self.date = date;
     MatchType(System, {self.datePicker.date = date;})
-    MatchType(Custom, {self.currentDate = transformFromDate(self.date);[self selectDate:self.currentDate];})
+    MatchType(Custom, {[self selectDate:transformFromDate(date)];})
 }
 
 - (void)selectDate:(LYSPickerDate)date
