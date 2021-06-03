@@ -503,19 +503,19 @@ NSString *const LYSDatePickerDidSelectDateNotifition = @"LYSDatePickerDidSelectD
     [self layoutIfNeeded];
     
     self.currentDate = transformFromDate(self.date);
-    [self selectDate:self.currentDate];
+    [self selectDate:self.currentDate animated:NO];
 }
 
-- (void)updateDate:(NSDate *)date
+- (void)updateDate:(NSDate *)date animated:(BOOL)animated
 {
     WARN(date == nil, @"The date passed in cannot be empty, and the corresponding conversion is made here. If the incoming date is empty, the current date is selected by default.\n Update the value of this property to remove this warning @property (nonnull, nonatomic, strong) NSDate *date;")
     Match(date == nil, date = [NSDate date];)
     self.date = date;
     MatchType(System, {self.datePicker.date = date;})
-    MatchType(Custom, {[self selectDate:transformFromDate(date)];})
+    MatchType(Custom, {[self selectDate:transformFromDate(date) animated:animated];})
 }
 
-- (void)selectDate:(LYSPickerDate)date
+- (void)selectDate:(LYSPickerDate)date animated:(BOOL)animated
 {
     NSInteger yearIndex                         = date.year-self.fromYear-1;
     NSInteger monthIndex                        = date.month-1;
@@ -528,52 +528,42 @@ NSString *const LYSDatePickerDidSelectDateNotifition = @"LYSDatePickerDidSelectD
         NSInteger hourValue = 0;
         MatchHourStandard(24Hour, {hourValue = hourIndex_24;})
         MatchHourStandard(12Hour, {hourValue = hourIndex_12;})
-        [self.pickerView selectRow:hourValue inComponent:0 animated:YES];
-        [self.pickerView selectRow:minuteIndex inComponent:1 animated:YES];
+        [self.pickerView selectRow:hourValue inComponent:0 animated:animated];
+        [self.pickerView selectRow:minuteIndex inComponent:1 animated:animated];
     })
     
     MatchDatePickerMode(Date, {
-        [self.pickerView selectRow:monthIndex inComponent:0 animated:YES];
-        [self.pickerView selectRow:dayIndex inComponent:1 animated:YES];
+        [self.pickerView selectRow:monthIndex inComponent:0 animated:animated];
+        [self.pickerView selectRow:dayIndex inComponent:1 animated:animated];
     })
     
     MatchDatePickerMode(DateAndTime, {
         NSInteger hourValue = 0;
         MatchHourStandard(24Hour, {hourValue = hourIndex_24;})
         MatchHourStandard(12Hour, {hourValue = hourIndex_12;})
-        [self.pickerView selectRow:monthIndex inComponent:0 animated:YES];
-        [self.pickerView selectRow:dayIndex inComponent:1 animated:YES];
-        [self.pickerView selectRow:hourValue inComponent:2 animated:YES];
-        [self.pickerView selectRow:minuteIndex inComponent:3 animated:YES];
+        [self.pickerView selectRow:monthIndex inComponent:0 animated:animated];
+        [self.pickerView selectRow:dayIndex inComponent:1 animated:animated];
+        [self.pickerView selectRow:hourValue inComponent:2 animated:animated];
+        [self.pickerView selectRow:minuteIndex inComponent:3 animated:animated];
     })
     
     MatchDatePickerMode(YearAndDate, {
-        [self.pickerView selectRow:yearIndex inComponent:0 animated:YES];
-        [self.pickerView selectRow:monthIndex inComponent:1 animated:YES];
-        [self.pickerView selectRow:dayIndex inComponent:2 animated:YES];
+        [self.pickerView selectRow:yearIndex inComponent:0 animated:animated];
+        [self.pickerView selectRow:monthIndex inComponent:1 animated:animated];
+        [self.pickerView selectRow:dayIndex inComponent:2 animated:animated];
     })
     
     MatchDatePickerMode(YearAndDateAndTime, {
         NSInteger hourValue = 0;
         MatchHourStandard(24Hour, {hourValue = hourIndex_24;})
         MatchHourStandard(12Hour, {hourValue = hourIndex_12;})
-        [self.pickerView selectRow:yearIndex inComponent:0 animated:YES];
-        [self.pickerView selectRow:monthIndex inComponent:1 animated:YES];
-        [self.pickerView selectRow:dayIndex inComponent:2 animated:YES];
-        [self.pickerView selectRow:hourValue inComponent:3 animated:YES];
-        [self.pickerView selectRow:minuteIndex inComponent:4 animated:YES];
+        [self.pickerView selectRow:yearIndex inComponent:0 animated:animated];
+        [self.pickerView selectRow:monthIndex inComponent:1 animated:animated];
+        [self.pickerView selectRow:dayIndex inComponent:2 animated:animated];
+        [self.pickerView selectRow:hourValue inComponent:3 animated:animated];
+        [self.pickerView selectRow:minuteIndex inComponent:4 animated:animated];
     })
     [self monitorCurrentDate];
-}
-
-- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
-{
-    MatchDatePickerMode(Time,                   {return Crossroads(HourStandard(12Hour), 3, 2);})
-    MatchDatePickerMode(Date,                   {return 2;})
-    MatchDatePickerMode(DateAndTime,            {return Crossroads(HourStandard(12Hour), 5, 4);})
-    MatchDatePickerMode(YearAndDate,            {return 3;})
-    MatchDatePickerMode(YearAndDateAndTime,     {return Crossroads(HourStandard(12Hour), 6, 5);})
-    return 0;
 }
 
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
@@ -786,7 +776,7 @@ NSString *const LYSDatePickerDidSelectDateNotifition = @"LYSDatePickerDidSelectD
         NSComparisonResult miniResult = [[NSCalendar currentCalendar] compareDate:self.minimumDate toDate:date toUnitGranularity:NSCalendarUnitMinute];
         if (miniResult == NSOrderedDescending) {
             self.currentDate = transformFromDate(self.minimumDate);
-            [self selectDate:self.currentDate];
+            [self selectDate:self.currentDate animated:YES];
             return self.minimumDate;
         }
     })
@@ -794,7 +784,7 @@ NSString *const LYSDatePickerDidSelectDateNotifition = @"LYSDatePickerDidSelectD
         NSComparisonResult maxResult = [[NSCalendar currentCalendar] compareDate:self.maximumDate toDate:date toUnitGranularity:NSCalendarUnitMinute];
         if (maxResult == NSOrderedAscending) {
             self.currentDate = transformFromDate(self.maximumDate);
-            [self selectDate:self.currentDate];
+            [self selectDate:self.currentDate animated:YES];
             return self.maximumDate;
         }
     })

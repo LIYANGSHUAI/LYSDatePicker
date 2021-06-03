@@ -113,7 +113,7 @@ extern NSString * _Nullable const LYSDatePickerDidSelectDateNotifition;
 
 
 /// 更新显示日期
-- (void)updateDate:(NSDate *_Nullable)date;
+- (void)updateDate:(NSDate *_Nullable)date animated:(BOOL)animated;
 
 /// 初始化方法
 - (instancetype _Nullable )initWithFrame:(CGRect)frame type:(LYSDatePickerType)type;
